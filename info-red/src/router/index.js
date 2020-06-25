@@ -33,7 +33,12 @@ Vue.use(VueRouter)
     path: '/Administracion/CrearArticulo',
     name: 'CrearArticulo',
     component: () => import('../views/CrearArticulo.vue')
-  }
+  },
+    { //VENTANA PARA CREAR UN USUARIO
+      path: '/Administracion/CrearUsuario',
+      name: 'CrearUsuario',
+      component: () => import('../views/CrearUsuario.vue')
+    }
 ]
 
 const router = new VueRouter({
