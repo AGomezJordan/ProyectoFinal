@@ -78,11 +78,17 @@
     }
 
     ::-webkit-scrollbar-thumb{
-        background: #292929;
+        background: #024059;
         border-radius: 29px 29px 29px 29px;
     }
     ::-webkit-scrollbar-thumb:hover{
         background: #4ebfb4;
+    }
+    ::-webkit-scrollbar-track-piece{
+        background-color: rgba(41, 41, 41, 0);
+    }
+    ::-webkit-scrollbar-corner{
+        background-color: rgba(41, 41, 41, 0);
     }
 
     .divtwitter{
