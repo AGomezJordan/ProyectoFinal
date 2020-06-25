@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- TITULO -->
         <v-row>
             <v-col cols="0" md="4"></v-col>
             <v-col cols="12" md="4">
@@ -7,11 +8,14 @@
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
+
+        <!-- FORMULARIO -->
         <v-row>
             <v-col cols="0" md="2"></v-col>
             <v-col cols="12" md="8">
                 <form>
                 <v-row class="formulario">
+                    <!-- TITULAR -->
                     <v-col cols="12" md="6">
                         <v-text-field
                                 v-model="$v.titular.$model"
@@ -22,6 +26,7 @@
                                 dark
                         ></v-text-field>
                     </v-col>
+                    <!-- SUBTITULAR -->
                     <v-col cols="12" md="6">
                         <v-text-field
                                 v-model="$v.subtitular.$model"
@@ -32,7 +37,7 @@
                                 dark
                         ></v-text-field>
                     </v-col>
-
+                    <!-- ARTICULO -->
                     <v-col cols="12">
                         <v-textarea
                                 auto-grow
@@ -45,7 +50,7 @@
                                 v-model="$v.articulo.$model"
                         ></v-textarea>
                     </v-col>
-
+                    <!-- PORTADA -->
                     <v-col cols="12" md="6">
                         <v-file-input
                                 label="Portada"
@@ -59,6 +64,7 @@
                                 v-model="portada"
                         ></v-file-input>
                     </v-col>
+                    <!-- CATEGORIA -->
                     <v-col cols="12" md="6">
                         <v-select
                                 :items="categorias"
@@ -68,7 +74,9 @@
                                 v-model="$v.categoria.$model"
                         ></v-select>
                     </v-col>
+                    <!-- BOTONES -->
                     <v-col cols="12" class="text-center">
+                        <!-- ENVIAR -->
                         <v-btn
                             color="success"
                             class="mr-5"
@@ -80,6 +88,7 @@
                         >
                             <v-icon>mdi-check</v-icon>
                         </v-btn>
+                        <!-- BORRAR -->
                         <v-btn color="error" class="ml-5" fab small dark @click="borrarformulario()">
                             <v-icon>mdi-restart</v-icon>
                         </v-btn>

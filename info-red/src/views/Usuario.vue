@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- TTITULO NOMBRE DEL USUARIO -->
         <v-row>
             <v-col cols="0" md="4"></v-col>
             <v-col cols="12" md="4">
@@ -7,17 +8,23 @@
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
+
+        <!-- ESTADISTICAS DEL USUARIO -->
         <v-row class="estadistica">
+
             <v-col cols="12" md="4" class="text-center">
                 Articulos Creados<br> <div class="mt-3 datos">100</div>
             </v-col>
+
             <v-col cols="12" md="4" class="text-center">
                 Articulos Publicados<br><div class="mt-3 datos">58</div>
             </v-col>
+
             <v-col cols="12" md="4" class="text-center">
                 Fecha de Alta<br><div class="mt-3 datos">12/02/2015</div>
             </v-col>
 
+            <!-- SEPARACIÓN -->
             <v-col cols="12"></v-col>
             <v-col cols="12"></v-col>
             <v-col cols="12"></v-col>
@@ -35,9 +42,11 @@
                     58
                 </v-progress-circular>
             </v-col>
+
             <v-col cols="12" md="4" class="text-center">
                 Usuario <br> <div class="mt-3 datos">Editor</div>
             </v-col>
+
             <v-col cols="12" md="4" class="text-center">
                 Acciones <br>
                 <div class="mt-4">
@@ -54,9 +63,11 @@
     export default {
         name: "Usuario",
         mounted(){
+            //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(true)
         },
         destroyed(){
+            //DESAPAREZCA LA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(false)
         },
         methods:{

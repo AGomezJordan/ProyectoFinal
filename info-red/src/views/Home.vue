@@ -1,19 +1,23 @@
 <template class="tem">
     <div class="white--text c">
+        <!-- MENU LATERAL DONDE APARECE INFORMACION DE TWITTER ETC (SOLO EN ESCRITORIO) -->
         <div
             class="menuLateral"
            :class="{'d-none':movil, 'd-sm-none': movil, 'd-md-block': movil}"
         >
             <twitter></twitter>
         </div>
+        <!-- CONTENIDO DEL HOME -->
         <div class="content align-content-center" :class="{'escritorio':!movil}">
             <v-row>
+                <!-- ARTICULOS -->
                 <v-col
                     v-for="n in 50"
                     cols="12"
                     md="6"
                     lg="4"
                 >
+                    <!-- ARTICULO -->
                     <div class="articulo">
                         <v-card
                             class="tarjeta"
@@ -23,14 +27,19 @@
                                 params:
                                     {titular: 'Maroto pone coto a la cuarentena para extranjeros: “Acabará a la vez que el estado de alarma”'}}"
                         >
+                            <!-- PORTADA -->
                             <v-card-text>
                                 <div class="foto">
                                     <img src="../assets/portada.jpg">
                                 </div>
                             </v-card-text>
+
+                            <!-- TITULAR -->
                             <v-card-text class="text-justify title white--text">
                                 Maroto pone coto a la cuarentena para extranjeros: “Acabará a la vez que el estado de alarma”
                             </v-card-text>
+
+                            <!-- FECHA -->
                             <v-card-text>15-05-2020</v-card-text>
                         </v-card>
                     </div>
