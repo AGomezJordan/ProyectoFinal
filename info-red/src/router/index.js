@@ -1,22 +1,38 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
   const routes = [
-  {
+  { //VENTANA PRINCIPAL
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import('../views/Home.vue')
   },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+  { //MOSTRAR UN ARTICULO
+    path: '/Articulo/:titular',
+    name: 'Articulo',
+    component: () => import('../views/Articulo.vue')
+  },
+  { //VENTANA PRINCIPAL ADMINISTRACION
+    path: '/Administracion',
+    name: 'Administracion',
+    component: () => import('../views/Administracion.vue')
+  },
+  { //VENTANA PARA SELECCIONAR UN USUARIO
+    path: '/Administracion/ConsultarUsuario',
+    name: 'ConsultarUsuario',
+    component: () => import('../views/ConsultarUsuario.vue')
+  },
+  { //VENTANA PARA MOSTRAR INFORMACION DE UN USUARIO Y LAS ACCIONES
+    path: '/Administracion/Usuario/:id',
+    name: 'Usuario',
+    component: () => import('../views/Usuario.vue')
+  },
+  { //VENTANA PARA CREAR UN ARTICULO
+    path: '/Administracion/CrearArticulo',
+    name: 'CrearArticulo',
+    component: () => import('../views/CrearArticulo.vue')
   }
 ]
 
