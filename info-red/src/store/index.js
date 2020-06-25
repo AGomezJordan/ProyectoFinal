@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     back: false,
-    admin: true
+    admin: false
   },
   mutations: {
     setBack(state, payload){
