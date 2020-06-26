@@ -43,7 +43,7 @@
                   dense
           >
               <v-list-item-group
-                      active-class="deep-purple--text text--accent-4"
+                      active-class="success"
               >
                   <v-list-item-title class="text-center title">MENÚ</v-list-item-title>
                   <div class="linea"></div>
@@ -112,12 +112,13 @@
               clipped
               color="secondary"
               v-if="admin"
+              overlay-color="#000"
       >
           <v-list
                   dense
           >
               <v-list-item-group
-                      active-class="deep-purple--text text--accent-4"
+                      active-class="success"
               >
                   <v-list-item-title class="text-center title">MENÚ</v-list-item-title>
                   <div class="linea"></div>

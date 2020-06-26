@@ -38,6 +38,11 @@ Vue.use(VueRouter)
       path: '/Administracion/CrearUsuario',
       name: 'CrearUsuario',
       component: () => import('../views/CrearUsuario.vue')
+    },
+    { //VENTANA PARA CONSULTAR ARTICULOS
+      path: '/Administracion/ConsultarArticulos',
+      name: 'ConsultarArticulos',
+      component: () => import('../views/ConsultarArticulos.vue')
     }
 ]
 

@@ -65,6 +65,7 @@
         mounted(){
             //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(true)
+            window.scroll(0,0)
         },
         destroyed(){
             //DESAPAREZCA LA FLECHA PARA IR ATRAS EN LA CABECERA
