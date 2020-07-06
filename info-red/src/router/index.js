@@ -43,6 +43,11 @@ Vue.use(VueRouter)
       path: '/Administracion/ConsultarArticulos',
       name: 'ConsultarArticulos',
       component: () => import('../views/ConsultarArticulos.vue')
+    },
+    { //VENTANA PARA VALIDAR ARTICULOS
+      path: '/Administracion/ValidarArticulos/:id',
+      name: 'ValidarArticulos',
+      component: () => import('../views/ValidarArticulos.vue')
     }
 ]
 

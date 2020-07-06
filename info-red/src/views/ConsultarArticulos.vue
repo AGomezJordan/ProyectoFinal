@@ -4,7 +4,7 @@
         <v-toolbar
                 color="#023059"
                 dark
-                height="150px"
+                height="250px"
                 class="d-block d-sm-block d-md-none"
         >
             <v-icon>mdi-filter</v-icon>
@@ -36,6 +36,18 @@
                         ></v-select>
                     </v-col>
 
+                    <!-- ESTADO -->
+                    <v-col cols="6">
+                        <v-select
+                                :items="estados"
+                                label="Estado"
+                                dark
+                                color="success"
+                                v-model="estado"
+                                class="ml-5 mr-5"
+                        ></v-select>
+                    </v-col>
+
                     <!-- FECHA DE PUBLICACION -->
                     <v-col cols="6">
                         <v-text-field
@@ -49,7 +61,7 @@
                     </v-col>
 
                     <!-- BOTONES -->
-                    <v-col cols="6">
+                    <v-col cols="12">
                         <v-btn
                                 color="success"
                                 small
@@ -84,7 +96,7 @@
                 <v-row class="ml-5 mt-8">
 
                     <!-- CATEGORIA -->
-                    <v-col cols="3">
+                    <v-col cols="2">
                         <v-select
                                 :items="categorias"
                                 label="Categoría"
@@ -96,7 +108,7 @@
                     </v-col>
 
                     <!-- AUTORES -->
-                    <v-col cols="3">
+                    <v-col cols="2">
                         <v-select
                                 :items="autores"
                                 label="Autor"
@@ -107,8 +119,20 @@
                         ></v-select>
                     </v-col>
 
+                    <!-- ESTADO -->
+                    <v-col cols="2">
+                        <v-select
+                                :items="estados"
+                                label="Estado"
+                                dark
+                                color="success"
+                                v-model="estado"
+                                class="ml-5 mr-5"
+                        ></v-select>
+                    </v-col>
+
                     <!-- FECHA DE PUBLICACION -->
-                    <v-col cols="3">
+                    <v-col cols="2">
                         <v-text-field
                                 v-model="fecha"
                                 label="Fecha"
@@ -120,7 +144,7 @@
                     </v-col>
 
                     <!-- BOTONES -->
-                    <v-col cols="3">
+                    <v-col cols="1">
                         <v-btn
                                 color="success"
                                 small
@@ -166,7 +190,12 @@
             </v-row>
 
             <!-- LISTA DE CADA ARTÍCULO -->
-            <router-link v-for="n in 10" :to="{name: 'Usuario', params: {id:'hola'}}">
+            <router-link
+                    v-for="n in 10"
+                    :to="{
+                            name: 'ValidarArticulos',
+                            params:
+                                {id: '21253-dfss3sdf-ersa'}}">
                 <v-row class="text-center usuario mb-4">
 
                     <!-- TITULAR -->
@@ -196,13 +225,14 @@
         data(){
             return{
                 collapseOnScroll: false,
-                categorias: ['ECONOMÍA', 'POLÍTICA', 'DEPORTES', 'MEDIOAMBIENTE'],
+                categorias: ['CUALQUIERA', 'ECONOMÍA', 'POLÍTICA', 'DEPORTES', 'MEDIOAMBIENTE'],
                 categoria: '',
-                autores: ['PEDRO', 'JUAN', 'ALVARO', 'LIDIA', 'JOSE'],
+                autores: ['CUALQUIERA', 'PEDRO', 'JUAN', 'ALVARO', 'LIDIA', 'JOSE'],
                 autor: '',
+                estados: ['CUALQUIERA', 'PUBLICADO', 'PENDIENTE', 'NO PUBLICADO'],
+                estado:'',
                 fecha:'',
-                hoy: '',
-                temp: ''
+                hoy: ''
             }
         },
         created() {
@@ -212,6 +242,9 @@
             let day = date.getDate()
             if(mes<10){
                 mes='0'+(mes+1);
+            }
+            if (day<10){
+                day='0'+(day);
             }
             this.hoy = year+'-'+mes+'-'+day
         }
