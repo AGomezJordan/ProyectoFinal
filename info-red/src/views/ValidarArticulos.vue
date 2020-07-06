@@ -1,5 +1,73 @@
 <template>
     <div class="white--text c">
+        <!-- ACCIONES -->
+        <div class="acciones">
+            <v-row class="text-center">
+                <v-col cols="6" md="3">
+                    <v-btn
+                        color="info"
+                        @click="$router.push({name: 'EditarArticulo', params:{id: '121asd1231asd'}})"
+                    >
+                        EDITAR
+                    </v-btn>
+                </v-col>
+                <v-col cols="6" md="3">
+                    <v-btn
+                        color="success"
+                        @click="publicar()"
+                    >
+                        PUBLICAR
+                    </v-btn>
+                </v-col>
+                <v-col cols="6" md="3">
+                    <v-btn
+                        color="accent"
+                        @click="despublicar()"
+                    >
+                        DESPUBLICAR
+                    </v-btn>
+                </v-col>
+                <v-col cols="6" md="3">
+                    <v-btn
+                    color="error"
+                    @click="dialog = true"
+                    >
+                        BORRAR
+                    </v-btn>
+                </v-col>
+            </v-row>
+        </div>
+
+        <!-- DIALOG -->
+        <v-dialog
+                v-model="dialog"
+                max-width="290"
+        >
+            <div class="tarjeta">
+                <v-card class="text-center" color="secondary" dark>
+                    <v-card-text class="headline titulo pt-3 white--text">
+                        ¿QUIERES ELIMINAR EL ARTICULO?
+                    </v-card-text>
+
+                    <v-card-text class="text-center">
+                        <v-btn
+                                color="success darken-1"
+                                @click="eliminar()"
+                        >
+                            SI
+                        </v-btn>
+                        <v-btn
+                                color="error darken-1"
+                                @click="dialog = false"
+                        >
+                            NO
+                        </v-btn>
+                    </v-card-text>
+                </v-card>
+            </div>
+        </v-dialog>
+
+        <!-- ARTÍCULO -->
         <div class="content align-content-center">
                 <v-row>
                     <v-col cols="0" md="1"></v-col>
@@ -66,10 +134,12 @@
 
 <script>
     import {mapState, mapMutations} from 'vuex'
+    import router from '@/router'
     export default {
         name: "Articulo",
         data(){
             return{
+                dialog: false,
             }
         },
         components: {
@@ -86,7 +156,20 @@
             this.setBack(false)
         },
         methods:{
-            ...mapMutations(['setBack'])
+            ...mapMutations(['setBack']),
+            eliminar(){
+                alert("eliminado")
+                this.dialog = false
+                router.push({name: 'ConsultarArticulos'})
+            },
+            publicar(){
+                alert("Publicado")
+                router.push({name: 'ConsultarArticulos'})
+            },
+            despublicar(){
+                alert("Despublicado")
+                router.push({name: 'ConsultarArticulos'})
+            },
         }
     }
 </script>
@@ -115,5 +198,10 @@
         letter-spacing: 2px;
         line-height: 25px;
         font-size: 1.08em;
+    }
+    .acciones{
+        position: fixed;
+        z-index: 2;
+        width: 100%;
     }
 </style>

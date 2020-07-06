@@ -48,6 +48,11 @@ Vue.use(VueRouter)
       path: '/Administracion/ValidarArticulos/:id',
       name: 'ValidarArticulos',
       component: () => import('../views/ValidarArticulos.vue')
+    },
+    { //VENTANA PARA EDITAR ARTICULOS
+      path: '/Administracion/EditarArticulo/:id',
+      name: 'EditarArticulo',
+      component: () => import('../views/EditarArticulo.vue')
     }
 ]
 
