@@ -63,6 +63,21 @@ Vue.use(VueRouter)
       path: '/Administracion/CrearNota',
       name: 'CrearNota',
       component: () => import('../views/CrearNota.vue')
+    },
+    { //VENTANA PARA CONSULTAR LOGS
+      path: '/Administracion/Logs',
+      name: 'Logs',
+      component: () => import('../views/Logs.vue')
+    },
+    { //VENTANA PARA CONSULTAR NOTAS
+      path: '/Administracion/ConsultarNotas',
+      name: 'ConsultarNotas',
+      component: () => import('../views/ConsultarNotas.vue')
+    },
+    { //VENTANA PARA VER NOTAS
+      path: '/Administracion/notas/:id',
+      name: 'Notas',
+      component: () => import('../views/Nota.vue')
     }
 ]
 

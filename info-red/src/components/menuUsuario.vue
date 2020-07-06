@@ -1,5 +1,8 @@
 <template>
     <div>
+        <v-list-item @click="$router.push({name: 'Logs'})">
+            <v-list-item-title class="text-center title ma-4">Logs</v-list-item-title>
+        </v-list-item>
         <v-list-item @click="$router.push({name: 'Administracion'})">
             <v-list-item-title class="text-center title ma-4">Home</v-list-item-title>
         </v-list-item>
@@ -20,6 +23,9 @@
         </v-list-item>
         <v-list-item @click="$router.push({name: 'CrearNota'})">
             <v-list-item-title class="text-center title ma-4">Crear Nota</v-list-item-title>
+        </v-list-item>
+        <v-list-item @click="$router.push({name: 'ConsultarNotas'})">
+            <v-list-item-title class="text-center title ma-4">Consultar Notas</v-list-item-title>
         </v-list-item>
     </div>
 </template>

@@ -10,7 +10,7 @@
             <v-icon>mdi-filter</v-icon>
             <v-toolbar-title>
                 <!-- FILTROS DISPONIBLES -->
-                <v-row class="ml-5 mt-8">
+                <v-row class="ml-5 mt-8 text-center">
 
                     <!-- CATEGORIA -->
                     <v-col cols="6">
