@@ -58,6 +58,11 @@ Vue.use(VueRouter)
       path: '/Administracion/CrearCategoria',
       name: 'CrearCategoria',
       component: () => import('../views/CrearCategoria.vue')
+    },
+    { //VENTANA PARA CREAR NOTAS
+      path: '/Administracion/CrearNota',
+      name: 'CrearNota',
+      component: () => import('../views/CrearNota.vue')
     }
 ]
 
