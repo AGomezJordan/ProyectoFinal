@@ -53,6 +53,11 @@ Vue.use(VueRouter)
       path: '/Administracion/EditarArticulo/:id',
       name: 'EditarArticulo',
       component: () => import('../views/EditarArticulo.vue')
+    },
+    { //VENTANA PARA CREAR CATEGORIAS
+      path: '/Administracion/CrearCategoria',
+      name: 'CrearCategoria',
+      component: () => import('../views/CrearCategoria.vue')
     }
 ]
 
