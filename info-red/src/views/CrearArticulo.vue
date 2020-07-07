@@ -31,7 +31,7 @@
                         <v-text-field
                                 v-model="$v.subtitular.$model"
                                 counter
-                                :rules="nameRules"
+                                :rules="subRules"
                                 label="SubTitular"
                                 color="success"
                                 dark
@@ -115,7 +115,12 @@
                 categorias: ['Politica', 'Economia', 'Deporte', 'Educación'],
                 categoria: '',
                 nameRules: [
-                    v => !!v || 'Titulo Requerido',
+                    v => !!v || 'Titular Requerido',
+                    v => v.length<255 || 'El titular solo puede tener 255 caracteres.'
+                ],
+                subRules: [
+                    v => !!v || 'Subtitular Requerido',
+                    v => v.length<255 || 'El subtitular solo puede tener 255 caracteres.'
                 ],
                 articuloRules: [
                     v => !!v || 'Articulo Requerido',
@@ -128,8 +133,8 @@
             }
         },
         validations:{
-            titular:{required},
-            subtitular:{required},
+            titular:{required, maxLength:maxLength(255)},
+            subtitular:{required,  maxLength:maxLength(255)},
             categoria:{required},
             articulo:{required, maxLength:maxLength(4294967295)}
         },
