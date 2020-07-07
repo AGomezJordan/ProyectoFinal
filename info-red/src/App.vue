@@ -13,12 +13,12 @@
       <v-icon v-if="back" class="white--text ml-4" @click="atras()">mdi-reply</v-icon>
       <div class="frase">
       <div class="texto d-none d-sm-none d-md-block">
-          <span v-if="!admin">LA NUEVA GENERACIÓN</span>
-          <span v-if="admin">ADMINISTRACIÓN</span>
+          <span v-if="this.user.tipo == null">LA NUEVA GENERACIÓN</span>
+          <span v-if="this.user.tipo != null">ADMINISTRACIÓN</span>
       </div>
       </div>
       <v-spacer></v-spacer>
-      <v-btn v-if="!admin" icon @click="mostrar=!mostrar">
+      <v-btn v-if="this.user.tipo == null" icon @click="mostrar=!mostrar">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-text-field
@@ -26,10 +26,9 @@
               v-model="buscar"
               hide-details
       ></v-text-field>
-
     </v-app-bar>
 
-      <!-- MENU LAERAL OCULTO NO ADMIN -->
+      <!-- MENU LAERAL OCULTO NO LOGEADO -->
     <v-navigation-drawer
               v-model="drawer"
               app
@@ -37,7 +36,7 @@
               temporary
               clipped
               color="secondary"
-              v-if="!admin"
+              v-if="this.user.tipo == null"
       >
           <v-list
                   dense
@@ -48,7 +47,7 @@
                   <v-list-item-title class="text-center title">MENÚ</v-list-item-title>
                   <div class="linea"></div>
                   <div class="text-center mb-5">
-                      <v-btn @click="dialog = true" color="success" class="btn">ADMINISTRACIÓN</v-btn>
+                      <v-btn @click="abrirLogin()" color="success" class="btn">ADMINISTRACIÓN</v-btn>
                   </div>
                   <div class="categorias">
                   <v-list-item v-for="n in 20" :key="n">
@@ -60,14 +59,15 @@
           </v-list>
       </v-navigation-drawer>
 
-      <!-- INICIO DE SESION ADMINISTRADOR -->
+      <!-- INICIO DE SESION -->
       <v-dialog
-              v-model="dialog"
+              v-model="this.dialogLogin"
               max-width="290"
+              persistent
       >
           <div class="tarjeta">
               <v-card class="text-center" color="secondary" dark>
-                  <v-form @submit.prevent="iniciarSesion()">
+                  <v-form @submit.prevent="login()">
                   <v-card-text class="headline titulo pt-3 white--text">ADMINISTRACIÓN</v-card-text>
 
                   <v-card-text>
@@ -90,20 +90,32 @@
                   </v-card-text>
 
                   <v-card-text class="text-center">
-                      <v-btn
-                              :disabled="$v.$invalid"
-                              color="success darken-1"
-                              type="submit"
-                      >
-                          INICAR SESION
-                      </v-btn>
+                      <v-row>
+                          <v-col cols="6">
+                              <v-btn
+                                      :disabled="$v.$invalid"
+                                      color="success darken-1"
+                                      type="submit"
+                              >
+                                  LOGIN
+                              </v-btn>
+                          </v-col>
+                          <v-col cols="6">
+                              <v-btn
+                                      color="error darken-1"
+                                      @click="cerrarLogin()"
+                              >
+                                  CANCELAR
+                              </v-btn>
+                          </v-col>
+                      </v-row>
                   </v-card-text>
                 </v-form>
               </v-card>
           </div>
       </v-dialog>
 
-      <!-- MENU LAERAL OCULTO ADMIN -->
+      <!-- MENU LAERAL OCULTO lOGEADO -->
       <v-navigation-drawer
               v-model="drawer"
               app
@@ -111,7 +123,7 @@
               temporary
               clipped
               color="secondary"
-              v-if="admin"
+              v-if="this.user.tipo != null"
               overlay-color="#000"
       >
           <v-list
@@ -145,7 +157,7 @@
               <v-card-text class="text-center">
                   <v-btn
                           color="success darken-1"
-                          @click="cerrarSesion()"
+                          @click="logOut()"
                   >
                       SI
                   </v-btn>
@@ -161,14 +173,14 @@
       </v-dialog>
 
       <!-- APP -->
-    <v-main :class="{'content': !admin, 'contentAdmin': admin}">
+    <v-main :class="{'content':this.user.tipo == null, 'contentAdmin': this.user.tipo != null}">
         <RouterView></RouterView>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState, mapMutations, mapActions} from 'vuex'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, minLength} from 'vuelidate/lib/validators'
 import MenuUsuario from "./components/menuUsuario";
@@ -179,7 +191,6 @@ export default {
     data(){
         return{
             drawer:false,
-            dialog: false,
             dialoga: false,
             buscar:'',
             mostrar:false,
@@ -206,23 +217,30 @@ export default {
         this.setBack(false)
     },
     computed:{
-          ...mapState(['back', 'admin'])
+          ...mapState(['back', 'admin', 'user', 'dialogLogin'])
     },
     methods:{
-        ...mapMutations(['setBack', 'setAdmin']),
+        ...mapMutations(['setBack', 'setAdmin', 'setDialogLogin']),
+        ...mapActions(['iniciarSesion', 'cerrarSesion']),
         atras(){
             this.$router.go(-1)
         },
-        iniciarSesion(){
-            this.setAdmin(true)
-            this.dialog = false
-            this.$router.push({name: 'Administracion'})
+        login(){
+            this.iniciarSesion({
+                usuario: this.$v.usuario.$model,
+                clave: this.$v.password.$model
+            })
         },
-        cerrarSesion(){
-            this.setAdmin(false)
+        logOut(){
             this.dialoga = false
-            this.$router.push('/')
+            this.cerrarSesion()
         },
+        abrirLogin(){
+            this.setDialogLogin(true)
+        },
+        cerrarLogin(){
+            this.setDialogLogin(false)
+        }
     }
 };
 </script>
