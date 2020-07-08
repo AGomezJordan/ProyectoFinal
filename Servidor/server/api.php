@@ -34,6 +34,9 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+                case 'tweets':
+                    include_once 'twitter/getTweets.php';
+                    break;
             }
             }
 

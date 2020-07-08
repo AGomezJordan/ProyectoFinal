@@ -1,15 +1,15 @@
 <template>
     <div>
-        <v-list-item @click="$router.push({name: 'Logs'})">
+        <v-list-item @click="$router.push({name: 'Logs'})" v-if="user.tipo === 'administrador'">
             <v-list-item-title class="text-center title ma-4">Logs</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$router.push({name: 'Administracion'})">
             <v-list-item-title class="text-center title ma-4">Home</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$router.push({name: 'CrearUsuario'})">
+        <v-list-item @click="$router.push({name: 'CrearUsuario'})" v-if="user.tipo === 'administrador'">
             <v-list-item-title class="text-center title ma-4">Crear Usuario</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$router.push({name: 'ConsultarUsuario'})">
+        <v-list-item @click="$router.push({name: 'ConsultarUsuario'})" v-if="user.tipo === 'administrador'">
             <v-list-item-title class="text-center title ma-4">Consultar Usuario</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$router.push({name: 'CrearArticulo'})">
@@ -18,7 +18,7 @@
         <v-list-item @click="$router.push({name: 'ConsultarArticulos'})">
             <v-list-item-title class="text-center title ma-4">Consultar Artículos</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="$router.push({name: 'CrearCategoria'})">
+        <v-list-item @click="$router.push({name: 'CrearCategoria'})" v-if="user.tipo === 'administrador'">
             <v-list-item-title class="text-center title ma-4">Crear Categoría</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$router.push({name: 'CrearNota'})">
@@ -31,8 +31,12 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     export default {
         name: "menuUsuario",
+        computed:{
+            ...mapState(['user'])
+        }
     }
 </script>
 

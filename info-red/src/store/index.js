@@ -4,7 +4,7 @@ import KJUR from 'jsrsasign'
 import decode from 'jwt-decode'
 import axios from 'axios'
 
-const HOST = 'http://192.168.0.175:80/';
+const HOST = 'http://192.168.0.175/';
 
 Vue.use(Vuex)
 import router from '@/router'
@@ -16,7 +16,8 @@ export default new Vuex.Store({
       usuarioID: localStorage.getItem('usuarioID') || null,
       tipo: localStorage.getItem('tipo') || null
     },
-    dialogLogin: false
+    dialogLogin: false,
+    mensajeError: ''
   },
   mutations: {
     setBack(state, payload){
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     setDialogLogin(state, payload){
       state.dialogLogin = payload
+    },
+    setMensajeError(state, payload){
+      state.mensajeError = payload
     },
     setAdmin(state, payload){
       state.admin = payload
@@ -71,22 +75,23 @@ export default new Vuex.Store({
               localStorage.setItem('tipo', data.tipo)
               commit('setUser', data)
               commit('setDialogLogin', false)
+              commit('setMensajeError', null)
               router.push({name: 'Administracion'})
 
             }else{ //Si no esta logeado
-              console.log("no login");
+              commit('setMensajeError', 'Usuario o contraseña incorrectos')
             }
 
           } else { //Datos erroneos
-            console.log("datos erroneos");
+            commit('setMensajeError', 'Upss... prueba otra vez')
           }
 
         } else { //Si no es valido
-          console.log("datos corruptos");
+          commit('setMensajeError', 'Upss... prueba otra vez')
         }
 
       }else{
-        console.log("Ha ocurrido un problema");
+        commit('setMensajeError', 'Server KO... intentelo de nuevo')
       }
     },
     cerrarSesion({commit}){

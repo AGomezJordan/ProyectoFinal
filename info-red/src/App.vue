@@ -66,52 +66,52 @@
               persistent
       >
           <div class="tarjeta">
+              <form @submit.prevent="login()">
               <v-card class="text-center" color="secondary" dark>
-                  <v-form @submit.prevent="login()">
-                  <v-card-text class="headline titulo pt-3 white--text">ADMINISTRACIÓN</v-card-text>
+              <v-card-text class="headline titulo pt-3 white--text">ADMINISTRACIÓN</v-card-text>
+              <v-card-text class="mensaje" v-if="this.mensajeError">{{mensajeError}}</v-card-text>
+              <v-card-text>
+                  <v-text-field
+                          v-model="$v.usuario.$model"
+                          :counter="10"
+                          :rules="nameRules"
+                          label="Usuario"
+                          required
+                  ></v-text-field>
 
-                  <v-card-text>
-                      <v-text-field
-                              v-model="$v.usuario.$model"
-                              :counter="10"
-                              :rules="nameRules"
-                              label="Usuario"
-                              required
-                      ></v-text-field>
+                  <v-text-field
+                          v-model="$v.password.$model"
+                          counter
+                          :rules="passRules"
+                          label="Constraseña"
+                          type="password"
+                          required
+                  ></v-text-field>
+              </v-card-text>
 
-                      <v-text-field
-                              v-model="$v.password.$model"
-                              counter
-                              :rules="passRules"
-                              label="Constraseña"
-                              type="password"
-                              required
-                      ></v-text-field>
-                  </v-card-text>
-
-                  <v-card-text class="text-center">
-                      <v-row>
-                          <v-col cols="6">
-                              <v-btn
-                                      :disabled="$v.$invalid"
-                                      color="success darken-1"
-                                      type="submit"
-                              >
-                                  LOGIN
-                              </v-btn>
-                          </v-col>
-                          <v-col cols="6">
-                              <v-btn
-                                      color="error darken-1"
-                                      @click="cerrarLogin()"
-                              >
-                                  CANCELAR
-                              </v-btn>
-                          </v-col>
-                      </v-row>
-                  </v-card-text>
-                </v-form>
+              <v-card-text class="text-center">
+                  <v-row>
+                      <v-col cols="6">
+                          <v-btn
+                                  :disabled="$v.$invalid"
+                                  color="success darken-1"
+                                  type="submit"
+                          >
+                              LOGIN
+                          </v-btn>
+                      </v-col>
+                      <v-col cols="6">
+                          <v-btn
+                                  color="error darken-1"
+                                  @click="cerrarLogin()"
+                          >
+                              CANCELAR
+                          </v-btn>
+                      </v-col>
+                  </v-row>
+              </v-card-text>
               </v-card>
+              </form>
           </div>
       </v-dialog>
 
@@ -217,7 +217,7 @@ export default {
         this.setBack(false)
     },
     computed:{
-          ...mapState(['back', 'admin', 'user', 'dialogLogin'])
+          ...mapState(['back', 'admin', 'user', 'dialogLogin', 'mensajeError'])
     },
     methods:{
         ...mapMutations(['setBack', 'setAdmin', 'setDialogLogin']),
@@ -230,6 +230,8 @@ export default {
                 usuario: this.$v.usuario.$model,
                 clave: this.$v.password.$model
             })
+            this.$v.usuario.$model = null;
+            this.$v.password.$model = null;
         },
         logOut(){
             this.dialoga = false
@@ -284,5 +286,10 @@ export default {
     }
     .titulo{
         text-align: center;
+    }
+    .mensaje{
+        font-size: 10px;
+        letter-spacing: 3px;
+        color: #f44336;
     }
 </style>

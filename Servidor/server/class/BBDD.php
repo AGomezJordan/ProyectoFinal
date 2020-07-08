@@ -4,7 +4,7 @@
 class BBDD
 {
     //ATRIBUTOS
-    private $HOST="192.168.0.175";
+    private $HOST="localhost";
     private $US="root";
     private $PW="";
     private $NOMBRE="infored";

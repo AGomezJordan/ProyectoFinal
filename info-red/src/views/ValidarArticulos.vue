@@ -15,6 +15,7 @@
                     <v-btn
                         color="success"
                         @click="publicar()"
+                        v-if="user.tipo === 'administrador'"
                     >
                         PUBLICAR
                     </v-btn>
@@ -23,6 +24,7 @@
                     <v-btn
                         color="accent"
                         @click="despublicar()"
+                        v-if="user.tipo === 'administrador'"
                     >
                         DESPUBLICAR
                     </v-btn>
@@ -31,6 +33,7 @@
                     <v-btn
                     color="error"
                     @click="dialog = true"
+                    v-if="user.tipo === 'administrador'"
                     >
                         BORRAR
                     </v-btn>
@@ -142,8 +145,8 @@
                 dialog: false,
             }
         },
-        components: {
-            ...mapState(['back'])
+        computed: {
+            ...mapState(['user'])
         },
         created() {
             this.setBack(true)
