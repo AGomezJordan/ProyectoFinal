@@ -9,6 +9,8 @@
             <v-col cols="0" md="4"></v-col>
         </v-row>
 
+        <div class="text-center white--text mensaje">{{mensaje}}</div>
+
         <!-- FORMULARIO -->
         <v-row>
             <v-col cols="0" md="2"></v-col>
@@ -148,6 +150,7 @@
                                             dark
                                             v-if="!$v.$invalid"
                                             @click="enviar()"
+                                            :disabled="cargando"
                                     >
                                         <v-icon>mdi-check</v-icon>
                                     </v-btn>
@@ -168,19 +171,26 @@
 
 <script>
     import {required, maxLength, sameAs, minLength} from 'vuelidate/lib/validators'
+    import {sha256} from 'js-sha256';
+    import KJUR from 'jsrsasign'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
+
     export default {
         name: "CrearUsuario",
         data(){
             return{
+                cargando: false,
                 usuario: '',
                 password: '',
                 password2: '',
-                tipoUsuarios: ['Administrador','Escritor'],
+                tipoUsuarios: ['administrador','escritor'],
                 tipoUsuario: '',
                 apellido: '',
                 apellido2: '',
                 nombre: '',
                 telefono:'',
+                mensaje: '',
                 usuarioRules: [
                     v => !!v || 'Usuario Requerido',
                     v => (v && v.length <= 10) || 'Usuario no puede tener mas de 10 caracteres'
@@ -218,7 +228,6 @@
         },
         methods:{
             borrarformulario(){
-                alert("ENVIADO")
                 this.$v.usuario.$model = ''
                 this.$v.tipoUsuario.$model = ''
                 this.$v.password.$model = ''
@@ -229,7 +238,71 @@
                 this.$v.telefono.$model = ''
             },
             enviar(){
-                alert("ENVIADO")
+                this.crearUsuario()
+            },
+            async crearUsuario(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+                let host = 'http://localhost:80/'
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    func: 'crearUsuario',
+                    usuario: this.$v.nombre.$model,
+                    clave: sha256(this.$v.password.$model),
+                    nombre: this.$v.nombre.$model,
+                    ap1: this.$v.apellido.$model,
+                    ap2: this.$v.apellido2.$model,
+                    tipo: this.$v.tipoUsuario.$model,
+                    telefono: this.$v.telefono.$model
+                };
+                this.borrarformulario()
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+                console.log(jwt)
+
+                let response = await axios.post(host+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.creado){ //Si esta creado
+                                this.mensaje = '* USUARIO CREADO CORRECTAMENTE *'
+                                this.cargando = false
+                            }else{ //Si no esta creado
+                                this.mensaje = '* EL USUARIO NO HA PODIDO CREARSE *'
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                    this.cargando = false
+                }
             }
         }
     }
@@ -256,5 +329,9 @@
         width: 100%;
         height: 3px;
         border-radius: 18px 18px 18px 18px;
+    }
+    .mensaje{
+        width: 100%;
+        letter-spacing: 3px;
     }
 </style>

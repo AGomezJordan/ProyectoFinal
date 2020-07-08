@@ -3,8 +3,9 @@ import Vuex from 'vuex'
 import KJUR from 'jsrsasign'
 import decode from 'jwt-decode'
 import axios from 'axios'
+import { sha256} from 'js-sha256';
 
-const HOST = 'http://192.168.0.175/';
+const HOST = 'http://localhost:80/';
 
 Vue.use(Vuex)
 import router from '@/router'
@@ -50,11 +51,16 @@ export default new Vuex.Store({
 
       //crear JWT
       let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
-      let data = {func: 'login', usuario: payload.usuario, clave: payload.clave}; //Datos de JWT
+      let data = {//Datos de JWT
+        func: 'login',
+        usuario: payload.usuario,
+        clave: sha256(payload.clave)
+      };
       let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
 
       let formd = new FormData();
       formd.append("jwt", jwt)
+      console.log(jwt)
 
       let response = await axios.post(HOST+'server/api.php', formd)
       let datos = response.data

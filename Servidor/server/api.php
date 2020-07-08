@@ -25,6 +25,8 @@ if(isset($_REQUEST['jwt'])){
         if (isset($decoded)){ //Si el token es valido
             $func = $decoded->func;
             switch ($func) {
+
+                //INICIAR SESION
                 case 'login':
                     if (isset($decoded->usuario) && isset($decoded->clave)){
                         $data['usuario']=$decoded->usuario;
@@ -34,11 +36,30 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+
+                //OBTENER TWEETS
                 case 'tweets':
                     include_once 'twitter/getTweets.php';
                     break;
+
+                //CREAR USUARIO
+                case 'crearUsuario':
+                    if (isset($decoded->usuario) && isset($decoded->clave) && isset($decoded->nombre) && isset($decoded->ap1)
+                        && isset($decoded->ap2)&& isset($decoded->tipo)&& isset($decoded->telefono)){
+                        $data['usuario']= $decoded->usuario;
+                        $data['clave']= $decoded->clave;
+                        $data['nombre']= $decoded->nombre;
+                        $data['ap1']= $decoded->ap1;
+                        $data['ap2']= $decoded->ap2;
+                        $data['tipo']= $decoded->tipo;
+                        $data['telefono']= $decoded->telefono;
+
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
             }
-            }
+        }
 
     }catch (\Firebase\JWT\ExpiredException $e){
         $json = '{"status": false,"mensaje":"Token caducadoºº"}';

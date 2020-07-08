@@ -185,6 +185,7 @@ import { validationMixin } from 'vuelidate'
 import { required, maxLength, minLength} from 'vuelidate/lib/validators'
 import MenuUsuario from "./components/menuUsuario";
 
+
 export default {
     name: 'App',
     components: {MenuUsuario},
