@@ -43,6 +43,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    //Iniciar sesion en el sistema
     async iniciarSesion({commit}, payload){
       let jws = KJUR.jws.JWS; //Objeto para tratar JWT
       let secret = "Alvaro1234@asdfgh"; // Clave privada
@@ -94,12 +95,15 @@ export default new Vuex.Store({
         commit('setMensajeError', 'Server KO... intentelo de nuevo')
       }
     },
+
+    //Cerrar sesion abierta
     cerrarSesion({commit}){
       localStorage.removeItem('usuarioID')
       localStorage.removeItem('tipo')
       commit('borrarUsuario')
       router.push({name: 'Home'})
-    }
+    },
+
   },
   modules: {
   }

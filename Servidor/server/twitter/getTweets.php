@@ -9,7 +9,7 @@ $settings = array(
 );
 
 $url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
-$getfield = '?screen_name=infoo_red&count=10';
+$getfield = '?screen_name=infoo_red&count=5';
 $requestMethod = 'GET';
 $twitter = new TwitterAPIExchange($settings);
 $json =  $twitter->setGetfield($getfield)
@@ -20,6 +20,7 @@ $datos = json_decode($json);
 $cad = '{"data":[';
 foreach ($datos as $tweet){
     $cad.='{"fecha":"'.$tweet->created_at.'",';
+    $cad.='"id":"'.$tweet->id_str.'",';
     $cad.='"tweet":"'.$tweet->text.'"},';
 }
 $cad = substr($cad, 0, -1);
