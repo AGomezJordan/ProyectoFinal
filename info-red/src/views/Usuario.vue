@@ -4,7 +4,9 @@
         <v-row>
             <v-col cols="0" md="4"></v-col>
             <v-col cols="12" md="4">
-                <div class="titular text-center">PEDRO GARCIA ROMERO</div>
+                <div class="titular text-center">
+                    {{usuario.nombre}} {{usuario.apellido1}} {{usuario.apellido2}}
+                </div>
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
@@ -13,15 +15,15 @@
         <v-row class="estadistica">
 
             <v-col cols="12" md="4" class="text-center">
-                Articulos Creados<br> <div class="mt-3 datos">100</div>
+                Articulos Creados<br> <div class="mt-3 datos">{{usuario.creado}}</div>
             </v-col>
 
             <v-col cols="12" md="4" class="text-center">
-                Articulos Publicados<br><div class="mt-3 datos">58</div>
+                Articulos Publicados<br><div class="mt-3 datos">{{usuario.publicado}}</div>
             </v-col>
 
             <v-col cols="12" md="4" class="text-center">
-                Fecha de Alta<br><div class="mt-3 datos">12/02/2015</div>
+                Fecha de Alta<br><div class="mt-3 datos">{{usuario.fecha}}</div>
             </v-col>
 
             <!-- SEPARACIÓN -->
@@ -33,18 +35,18 @@
                 Porcentaje A.C / A.P<br>
                 <v-progress-circular
                         :rotate="90"
-                        :size="90"
+                        :size="100"
                         :width="12"
-                        value="58"
+                        :value="porcentaje"
                         color="success"
                         class="mt-5"
                 >
-                    58
+                    {{porcentaje}}%
                 </v-progress-circular>
             </v-col>
 
             <v-col cols="12" md="4" class="text-center">
-                Usuario <br> <div class="mt-3 datos">Editor</div>
+                Usuario <br> <div class="mt-3 datos">{{usuario.tipo}}</div>
             </v-col>
 
             <v-col cols="12" md="4" class="text-center">
@@ -60,8 +62,81 @@
 
 <script>
     import {mapMutations} from 'vuex'
+    import KJUR from 'jsrsasign'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
     export default {
         name: "Usuario",
+        data(){
+          return{
+              usuario: [],
+              mensaje: '',
+              cargando: '',
+              porcentaje: 0,
+          }
+        },
+        async created(){
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+            let host = 'http://localhost:80/'
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                usuarioID: this.$route.params.id,
+                func: 'consultarUsuario',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+            console.log(jwt)
+
+            let response = await axios.post(host+'server/api.php', formd)
+            let datos = response.data
+
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si esta creado
+                            this.usuario = decoded.data
+                            this.porcentaje = Math.round((this.usuario.publicado * 100)/ this.usuario.creado);
+                            this.cargando = false
+                        }else{ //Si no esta creado
+                            this.cargando = false
+                        }
+
+                    } else { //Datos erroneos
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                } else { //Si no es valido
+                    this.mensaje = 'Upss... prueba otra vez'
+                    this.cargando = false
+                }
+
+            }else{
+                if (datos.mensaje !== null){
+                    this.mensaje = datos.mensaje;
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                }
+                this.cargando = false
+            }
+        },
         mounted(){
             //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(true)

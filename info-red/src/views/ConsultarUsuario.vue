@@ -7,20 +7,20 @@
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
-        <router-link v-for="n in 5" :to="{name: 'Usuario', params: {id:'hola'}}">
+        <router-link v-for="usuario in usuarios" :to="{name: 'Usuario', params: {id:usuario.id}}">
             <v-row class="text-center usuario mb-4">
                 <v-col cols="6" md="3">
                     <v-icon color="white">mdi-account</v-icon>
-                    Pedro Garcia Romero
+                    {{usuario.nombre}} {{usuario.ap1}} {{usuario.ap2}}
                 </v-col>
                 <v-col cols="6" md="3">
-                    pedro_gr_45
+                    {{usuario.usuario}}
                 </v-col>
                 <v-col cols="6" md="3">
-                    Escritor
+                    {{usuario.tipo}}
                 </v-col>
                 <v-col cols="6" md="3">
-                    02/12/2021
+                    {{usuario.fecha}}
                 </v-col>
             </v-row>
         </router-link>
@@ -28,8 +28,77 @@
 </template>
 
 <script>
+    import KJUR from 'jsrsasign'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
     export default {
-        name: "ConsultarUsuario"
+        name: "ConsultarUsuario",
+        data(){
+            return{
+                cargando: false,
+                usuarios: {},
+                mensaje: ''
+            }
+        },
+        async created() {
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+            let host = 'http://localhost:80/'
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                func: 'consultarUsuarios',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+
+            let response = await axios.post(host+'server/api.php', formd)
+            let datos = response.data
+
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si esta creado
+                            this.usuarios = decoded.data
+                            this.cargando = false
+                        }else{ //Si no esta creado
+                            this.cargando = false
+                        }
+
+                    } else { //Datos erroneos
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                } else { //Si no es valido
+                    this.mensaje = 'Upss... prueba otra vez'
+                    this.cargando = false
+                }
+
+            }else{
+                if (datos.mensaje !== null){
+                    this.mensaje = datos.mensaje;
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                }
+                this.cargando = false
+            }
+        }
     }
 </script>
 

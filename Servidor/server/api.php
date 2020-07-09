@@ -45,7 +45,7 @@ if(isset($_REQUEST['jwt'])){
                 //CREAR USUARIO
                 case 'crearUsuario':
                     if (isset($decoded->usuario) && isset($decoded->clave) && isset($decoded->nombre) && isset($decoded->ap1)
-                        && isset($decoded->ap2)&& isset($decoded->tipo)&& isset($decoded->telefono)){
+                        && isset($decoded->ap2)&& isset($decoded->tipo)&& isset($decoded->telefono) && isset($decoded->id)){
                         $data['usuario']= $decoded->usuario;
                         $data['clave']= $decoded->clave;
                         $data['nombre']= $decoded->nombre;
@@ -53,11 +53,34 @@ if(isset($_REQUEST['jwt'])){
                         $data['ap2']= $decoded->ap2;
                         $data['tipo']= $decoded->tipo;
                         $data['telefono']= $decoded->telefono;
+                        $data['id'] = $decoded->id;
 
                         new App($func, $data);
                     }else{
                         throw new Exception();
                     }
+                    break;
+
+                //CONSULTAR USUARIO
+                case 'consultarUsuarios':
+                    if (isset($decoded->id)){
+                        $data['id'] = $decoded->id;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+
+                    break;
+                case 'consultarUsuario':
+                    if (isset($decoded->id) && isset($decoded->usuarioID)){
+                        $data['id'] = $decoded->id;
+                        $data['usuarioID'] = $decoded->usuarioID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+
+                    break;
             }
         }
 

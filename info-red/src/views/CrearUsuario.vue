@@ -249,8 +249,9 @@
                 //crear JWT
                 let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
                 let data = {
+                    id: localStorage.getItem('usuarioID'),
                     func: 'crearUsuario',
-                    usuario: this.$v.nombre.$model,
+                    usuario: this.$v.usuario.$model,
                     clave: sha256(this.$v.password.$model),
                     nombre: this.$v.nombre.$model,
                     ap1: this.$v.apellido.$model,
@@ -300,7 +301,11 @@
                     }
 
                 }else{
-                    this.mensaje = 'Server KO... intentelo de nuevo'
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
                     this.cargando = false
                 }
             }
