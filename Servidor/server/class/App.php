@@ -33,6 +33,9 @@ class App
             case "editarUsuario";
                 $this->editarUsuario();
                 break;
+            case "desactivarUsuario";
+                $this->desactivarUsuario();
+                break;
 
         }
     }
@@ -161,7 +164,7 @@ class App
 
     //EDITAR USUARIO
     private function editarUsuario(){
-        $valido = $this->cnn->comprobarValido($this->data['id']);
+        $valido = $this->cnn->comprobarAdmin($this->data['id']);
         if ($valido){
             $result = $this->cnn->editarUsuario($this->data['usuarioID'], $this->data['tipo'], $this->data['clave'], $this->data['telefono']);
             if ($result) {
@@ -178,6 +181,34 @@ class App
                     'status' => true,
                     'editado' => false,
 
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //DESACRIVAR USUARIO
+    private function desactivarUsuario(){
+        $valido = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->desactivarUsuario($this->data['usuarioID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'desactivado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'desactivadp' => false,
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT
                 $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON

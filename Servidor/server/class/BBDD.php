@@ -221,10 +221,26 @@ class BBDD
                 $clave = base64_encode($result);
             //
 
-                $sql = "update usuarios set tipo='$tipo', clave='$clave', telefono=telefono where id='$id'";
+                $sql = "update usuarios set tipo='$tipo', clave='$clave', telefono=telefono where id='$id' and valido=1";
                 $result = $this->cnn->query($sql);
                 if ($result)$rt = true;
 
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Desactivar usuario
+    function desactivarUsuario($id){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            $sql = "update usuarios set valido=false where id = '$id'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
         }catch (Exception $e){
             $rt = false;
         }

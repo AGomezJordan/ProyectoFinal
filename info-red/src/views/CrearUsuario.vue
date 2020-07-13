@@ -9,7 +9,32 @@
             <v-col cols="0" md="4"></v-col>
         </v-row>
 
-        <div class="text-center white--text mensaje">{{mensaje}}</div>
+        <!-- ALERTA -->
+        <v-row class="mensaje">
+            <v-col cols="0" md="3"></v-col>
+            <v-col cols="12" md="6">
+                <!-- OK -->
+                <v-alert
+                        class="alerta"
+                        type="success"
+                        v-if="mensaje && !error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+
+                <!-- NOK -->
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="mensaje && error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+            </v-col>
+            <v-col cols="0" md="3"></v-col>
+        </v-row>
 
         <!-- FORMULARIO -->
         <v-row>
@@ -192,6 +217,7 @@
                 nombre: '',
                 telefono:'',
                 mensaje: '',
+                error: '',
                 usuarioRules: [
                     v => !!v || 'Usuario Requerido',
                     v => (v && v.length <= 10) || 'Usuario no puede tener mas de 10 caracteres'
@@ -232,6 +258,7 @@
         },
         methods:{
             borrarformulario(){
+                this.temp = false
                 this.$v.usuario.$model = ''
                 this.$v.tipoUsuario.$model = ''
                 this.$v.password.$model = ''
@@ -285,24 +312,29 @@
                         if (decoded.status) { //Datos como los esperabamos
 
                             if (decoded.creado){ //Si esta creado
+                                this.error=false
                                 this.mensaje = '* USUARIO CREADO CORRECTAMENTE *'
                                 this.cargando = false
                             }else{ //Si no esta creado
+                                this.error=true
                                 this.mensaje = '* EL USUARIO NO HA PODIDO CREARSE *'
                                 this.cargando = false
                             }
 
                         } else { //Datos erroneos
+                            this.error=true
                             this.mensaje = 'Upss... prueba otra vez'
                             this.cargando = false
                         }
 
                     } else { //Si no es valido
+                        this.error=true
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
                     }
 
                 }else{
+                    this.error=true
                     if (datos.mensaje !== null){
                         this.mensaje = datos.mensaje;
                     }else{
@@ -338,7 +370,9 @@
         border-radius: 18px 18px 18px 18px;
     }
     .mensaje{
-        width: 100%;
         letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
     }
 </style>

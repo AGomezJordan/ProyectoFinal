@@ -1,5 +1,6 @@
 <template>
     <div class="pa-4">
+        <!-- TITULO -->
         <v-row class="text-center mb-8">
             <v-col cols="0" md="4"></v-col>
             <v-col cols="12" md="4" class="pa-5">
@@ -7,6 +8,35 @@
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
+
+        <!-- ALERTA -->
+        <v-row class="mensaje">
+            <v-col cols="0" md="3"></v-col>
+            <v-col cols="12" md="6">
+                <!-- OK -->
+                <v-alert
+                        class="alerta"
+                        type="success"
+                        v-if="this.mensajeError && !error"
+                        dismissible
+                >
+                    {{mensajeError}}
+                </v-alert>
+
+                <!-- NOK -->
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="this.mensajeError && error"
+                        dismissible
+                >
+                    {{mensajeError}}
+                </v-alert>
+            </v-col>
+            <v-col cols="0" md="3"></v-col>
+        </v-row>
+
+        <!-- USUARIOS -->
         <router-link v-for="usuario in usuarios" :to="{name: 'Usuario', params: {id:usuario.id}}">
             <v-row class="text-center usuario mb-4">
                 <v-col cols="6" md="3">
@@ -43,7 +73,7 @@
             }
         },
         computed:{
-            ...mapState(['HOST'])
+            ...mapState(['HOST', 'mensajeError', 'error'])
         },
         async created() {
             this.cargando = true;
@@ -126,5 +156,11 @@
     }
     a{
         text-decoration: none;
+    }
+    .mensaje{
+        letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
     }
 </style>

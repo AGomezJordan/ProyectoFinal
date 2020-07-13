@@ -9,7 +9,32 @@
             <v-col cols="0" md="4"></v-col>
         </v-row>
 
-        <div class="text-center white--text mensaje">{{mensaje}}</div>
+        <!-- ALERTA -->
+        <v-row class="mensaje">
+            <v-col cols="0" md="3"></v-col>
+            <v-col cols="12" md="6">
+                <!-- OK -->
+                <v-alert
+                        class="alerta"
+                        type="success"
+                        v-if="mensaje && !error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+
+                <!-- NOK -->
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="mensaje && error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+            </v-col>
+            <v-col cols="0" md="3"></v-col>
+        </v-row>
 
         <!-- FORMULARIO -->
         <v-row>
@@ -196,6 +221,7 @@
                 cargando: false,
                 usuario: '',
                 password: '',
+                error: false,
                 password2: '',
                 tipoUsuarios: ['administrador','escritor'],
                 tipoUsuario: '',
@@ -365,26 +391,32 @@
 
                             if (decoded.editado){ //Si esta creado
                                 this.mensaje = '* USUARIO EDITADO CORRECTAMENTE *'
+                                this.error = false
                                 this.cargando = false
                             }else{ //Si no esta creado
                                 this.mensaje = '* EL USUARIO NO HA PODIDO EDITARSE *'
+                                this.error = true
                                 this.cargando = false
                             }
 
                         } else { //Datos erroneos
                             this.mensaje = 'Upss... prueba otra vez'
+                            this.error = true
                             this.cargando = false
                         }
 
                     } else { //Si no es valido
                         this.mensaje = 'Upss... prueba otra vez'
+                        this.error = true
                         this.cargando = false
                     }
 
                 }else{
                     if (datos.mensaje !== null){
                         this.mensaje = datos.mensaje;
+                        this.error = true
                     }else{
+                        this.error = true
                         this.mensaje = 'Server KO... intentelo de nuevo'
                     }
                     this.cargando = false
@@ -417,7 +449,9 @@
         border-radius: 18px 18px 18px 18px;
     }
     .mensaje{
-        width: 100%;
         letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
     }
 </style>

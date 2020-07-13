@@ -19,6 +19,7 @@ export default new Vuex.Store({
     },
     dialogLogin: false,
     mensajeError: '',
+    error: false,
     HOST: 'http://localhost:80/'
   },
   mutations: {
@@ -36,6 +37,9 @@ export default new Vuex.Store({
     },
     setUser(state, payload){
       state.user = payload
+    },
+    setError(state, payload){
+      state.error = payload
     },
     borrarUsuario(state){
       state.user = {

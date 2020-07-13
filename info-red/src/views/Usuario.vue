@@ -11,6 +11,33 @@
             <v-col cols="0" md="4"></v-col>
         </v-row>
 
+        <!-- ALERTA -->
+        <v-row class="mensaje">
+            <v-col cols="0" md="3"></v-col>
+            <v-col cols="12" md="6">
+                <!-- OK -->
+                <v-alert
+                        class="alerta"
+                        type="success"
+                        v-if="mensaje && !error"
+                        dismissible
+                >
+                    {{mensajeError}}
+                </v-alert>
+
+                <!-- NOK -->
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="mensaje && error"
+                        dismissible
+                >
+                    {{mensajeError}}
+                </v-alert>
+            </v-col>
+            <v-col cols="0" md="3"></v-col>
+        </v-row>
+
         <!-- ESTADISTICAS DEL USUARIO -->
         <v-row class="estadistica">
 
@@ -53,7 +80,7 @@
                 Acciones <br>
                 <div class="mt-4">
                     <v-btn color="success" :to="{name:'EditarUsuario', params:{id:this.$route.params.id}}">Editar</v-btn>
-                    <v-btn color="error">Borrar</v-btn>
+                    <v-btn color="error" @click="borrar()">Borrar</v-btn>
                 </div>
             </v-col>
         </v-row>
@@ -65,11 +92,14 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
+    import router from '@/router'
+
     export default {
         name: "Usuario",
         data(){
           return{
               usuario: [],
+              error:true,
               mensaje: '',
               cargando: '',
               porcentaje: 0,
@@ -148,7 +178,72 @@
             this.setBack(false)
         },
         methods:{
-        ...mapMutations(['setBack'])
+            ...mapMutations(['setBack', 'setMensajeError', 'setError']),
+            async borrar(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    usuarioID: this.$route.params.id,
+                    func: 'desactivarUsuario',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.desactivado){ //Si esta desactivado
+                                this.setMensajeError("USUARIO DESACTIVADO CORRECTAMENTE")
+                                this.setError(false)
+                                router.push({name:'ConsultarUsuario'})
+                            }else{ //Si no esta desactivado
+                                this.mensaje="EL USUARIO NO HA PODIDO DESACTIVARSE"
+                                this.error = true
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje="Upss... prueba otra vez"
+                            this.error = true
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje="Upss... prueba otra vez"
+                        this.error = true
+                        this.cargando = false
+                    }
+
+                }else{
+                    this.error = true
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    this.cargando = false
+                }
+            }
         }
     }
 </script>
@@ -172,5 +267,11 @@
     }
     .datos{
         color: #4ebfb4;
+    }
+    .mensaje{
+        letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
     }
 </style>
