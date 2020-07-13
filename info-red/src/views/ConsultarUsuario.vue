@@ -31,6 +31,8 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
+    import {mapState} from 'vuex'
+
     export default {
         name: "ConsultarUsuario",
         data(){
@@ -40,11 +42,13 @@
                 mensaje: ''
             }
         },
+        computed:{
+            ...mapState(['HOST'])
+        },
         async created() {
             this.cargando = true;
             let jws = KJUR.jws.JWS; //Objeto para tratar JWT
             let secret = "Alvaro1234@asdfgh"; // Clave privada
-            let host = 'http://localhost:80/'
 
             //crear JWT
             let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
@@ -58,7 +62,7 @@
             let formd = new FormData();
             formd.append("jwt", jwt)
 
-            let response = await axios.post(host+'server/api.php', formd)
+            let response = await axios.post(this.HOST+'server/api.php', formd)
             let datos = response.data
 
 

@@ -81,6 +81,22 @@ if(isset($_REQUEST['jwt'])){
                     }
 
                     break;
+                case 'editarUsuario':
+                    if (isset($decoded->id) && isset($decoded->tipo) && isset($decoded->clave) && isset($decoded->telefono)){
+                        $data['id'] = $decoded->id;
+                        $data['usuarioID'] = $decoded->usuarioID;
+                        $data['tipo'] = $decoded->tipo;
+                        $data['clave'] = $decoded->clave;
+                        $data['telefono'] = $decoded->telefono;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+
+                    break;
+                default:
+                    echo "hola";
+                    break;
             }
         }
 

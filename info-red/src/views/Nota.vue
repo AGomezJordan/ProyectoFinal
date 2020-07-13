@@ -22,7 +22,7 @@
 <script>
     import {mapState, mapMutations} from 'vuex'
     export default {
-        name: "Articulo",
+        name: "Nota",
         components: {
             ...mapState(['back'])
         },

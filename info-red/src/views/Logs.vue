@@ -24,7 +24,7 @@
 
 <script>
     export default {
-        name: "ConsultarUsuario"
+        name: "logs"
     }
 </script>
 

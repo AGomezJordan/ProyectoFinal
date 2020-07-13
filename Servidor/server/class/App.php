@@ -30,6 +30,9 @@ class App
             case "consultarUsuario";
                 $this->consultarUsuario();
                 break;
+            case "editarUsuario";
+                $this->editarUsuario();
+                break;
 
         }
     }
@@ -145,6 +148,35 @@ class App
                 $token = array(
                     'status' => true,
                     'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //EDITAR USUARIO
+    private function editarUsuario(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->editarUsuario($this->data['usuarioID'], $this->data['tipo'], $this->data['clave'], $this->data['telefono']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'editado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'editado' => false,
 
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT

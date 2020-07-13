@@ -104,7 +104,7 @@
 <script>
     import {required, maxLength} from 'vuelidate/lib/validators'
     export default {
-        name: "CrearArticulo",
+        name: "EditarArticulo",
         data(){
             return{
                 valido: false,

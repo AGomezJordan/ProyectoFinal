@@ -48,7 +48,7 @@
     import router from '@/router'
     import {required, maxLength} from 'vuelidate/lib/validators'
     export default {
-        name: "CrearCategoria",
+        name: "CrearNota",
         data(){
             return{
                 nombre: '',

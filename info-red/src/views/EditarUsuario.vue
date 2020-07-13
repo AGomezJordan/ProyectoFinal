@@ -4,7 +4,7 @@
         <v-row>
             <v-col cols="0" md="4"></v-col>
             <v-col cols="12" md="4">
-                <div class="titular text-center">CREAR USUARIO</div>
+                <div class="titular text-center">EDITAR USUARIO</div>
             </v-col>
             <v-col cols="0" md="4"></v-col>
         </v-row>
@@ -31,12 +31,14 @@
                               <!-- USUARIO -->
                               <v-col cols="12" md="6">
                                   <v-text-field
+                                          disabled
                                           v-model="$v.usuario.$model"
                                           :counter="10"
                                           :rules="usuarioRules"
                                           label="Usuario"
                                           color="success"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
 
@@ -47,6 +49,7 @@
                                           label="Tipo"
                                           dark
                                           color="success"
+                                          :loading="cargando"
                                           v-model="$v.tipoUsuario.$model"
                                   ></v-select>
                               </v-col>
@@ -61,6 +64,7 @@
                                           color="success"
                                           type="password"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
 
@@ -74,6 +78,7 @@
                                           color="success"
                                           type="password"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
                           </v-row>
@@ -91,36 +96,42 @@
                                 <!-- APELLIDO 1 -->
                                 <v-col cols="12" md="6">
                                     <v-text-field
+                                            disabled
                                             v-model="$v.apellido.$model"
                                             counter
                                             :rules="apellidoRules"
                                             label="Primer apellido"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
                                 <!-- APELLIDO 2 -->
                                 <v-col cols="12" md="6">
                                     <v-text-field
+                                            disabled
                                             v-model="$v.apellido2.$model"
                                             counter
                                             :rules="apellidoRules"
                                             label="Segundo apellido"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
                                 <!-- NOMBRE -->
                                 <v-col cols="12" md="6">
                                     <v-text-field
+                                            disabled
                                             v-model="$v.nombre.$model"
                                             counter
                                             :rules="nombreRules"
                                             label="Nombre"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
@@ -134,6 +145,7 @@
                                             label="Telefono"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -178,7 +190,7 @@
     import {mapState} from 'vuex'
 
     export default {
-        name: "CrearUsuario",
+        name: "EditarUsuario",
         data(){
             return{
                 cargando: false,
@@ -230,6 +242,75 @@
         computed:{
           ...mapState(['HOST'])
         },
+        async created(){
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                usuarioID: this.$route.params.id,
+                func: 'consultarUsuario',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+
+            let response = await axios.post(this.HOST+'server/api.php', formd)
+            let datos = response.data
+
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si esta creado
+                            let temp = decoded.data
+
+                            this.$v.usuario.$model = temp.usuario
+                            this.$v.tipoUsuario.$model = temp.tipo
+                            this.$v.password.$model = ''
+                            this.$v.password2.$model = ''
+                            this.$v.apellido.$model = temp.apellido1
+                            this.$v.apellido2.$model = temp.apellido2
+                            this.$v.nombre.$model = temp.nombre
+                            this.$v.telefono.$model = temp.telefono
+
+                            this.cargando = false
+                        }else{ //Si no esta creado
+                            this.cargando = false
+                        }
+
+                    } else { //Datos erroneos
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                } else { //Si no es valido
+                    this.mensaje = 'Upss... prueba otra vez'
+                    this.cargando = false
+                }
+
+            }else{
+                if (datos.mensaje !== null){
+                    this.mensaje = datos.mensaje;
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                }
+                this.cargando = false
+            }
+        },
         methods:{
             borrarformulario(){
                 this.$v.usuario.$model = ''
@@ -242,9 +323,9 @@
                 this.$v.telefono.$model = ''
             },
             enviar(){
-                this.crearUsuario()
+                this.editarUsuario()
             },
-            async crearUsuario(){
+            async editarUsuario(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
                 let secret = "Alvaro1234@asdfgh"; // Clave privada
@@ -253,27 +334,25 @@
                 let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
                 let data = {
                     id: localStorage.getItem('usuarioID'),
-                    func: 'crearUsuario',
-                    usuario: this.$v.usuario.$model,
-                    clave: sha256(this.$v.password.$model),
-                    nombre: this.$v.nombre.$model,
-                    ap1: this.$v.apellido.$model,
-                    ap2: this.$v.apellido2.$model,
+                    usuarioID: this.$route.params.id,
                     tipo: this.$v.tipoUsuario.$model,
-                    telefono: this.$v.telefono.$model
+                    clave: sha256(this.$v.password.$model),
+                    telefono: this.$v.telefono.$model,
+                    func: 'editarUsuario',
                 };
-                this.borrarformulario()
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
+                console.log(jwt)
 
                 let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data
 
 
                 if (datos.status) {
+                    console.log("entra")
                     //verify JWT
                     let token = datos.token;
                     let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
@@ -284,11 +363,11 @@
                         //Comprobar status
                         if (decoded.status) { //Datos como los esperabamos
 
-                            if (decoded.creado){ //Si esta creado
-                                this.mensaje = '* USUARIO CREADO CORRECTAMENTE *'
+                            if (decoded.editado){ //Si esta creado
+                                this.mensaje = '* USUARIO EDITADO CORRECTAMENTE *'
                                 this.cargando = false
                             }else{ //Si no esta creado
-                                this.mensaje = '* EL USUARIO NO HA PODIDO CREARSE *'
+                                this.mensaje = '* EL USUARIO NO HA PODIDO EDITARSE *'
                                 this.cargando = false
                             }
 

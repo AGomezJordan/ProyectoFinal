@@ -5,9 +5,17 @@ class BBDD
 {
     //ATRIBUTOS
     private $HOST="localhost";
+
+    //produccion
+    //private $US="id14190409_alvaro";
+    //private $PW="Azuqueca99@as";
+    //private $NOMBRE="id14190409_infored";
+
+    //desarrollo
     private $US="root";
     private $PW="";
     private $NOMBRE="infored";
+
     private $cnn;
 
     //CONSTRUCTOR Y DESTRUCTOR
@@ -94,9 +102,6 @@ class BBDD
             $result.=$char;
         }
         $clave = base64_encode($result);
-
-
-
         //
 
         try{
@@ -156,7 +161,7 @@ class BBDD
             $id = addslashes(trim(strip_tags($id)));
 
             //Seleccionar datos de usuario
-            $sql = "Select nombre, apellido1, apellido2, usuario, tipo, fechaAlta from usuarios where id = '$id'";
+            $sql = "Select nombre, apellido1, apellido2, usuario, tipo, fechaAlta, telefono from usuarios where id = '$id'";
             $result = $this->cnn->query($sql);
 
             if ($result->num_rows === 1){
@@ -167,6 +172,7 @@ class BBDD
                 $usuario['usuario'] = $row['usuario'];
                 $usuario['tipo'] = $row['tipo'];
                 $usuario['fecha'] = $row['fechaAlta'];
+                $usuario['telefono'] = $row['telefono'];
 
                 //Selecionar articulos creados
                 $sql = "Select count(articulos) as creados from articulos where autor='{$usuario['usuario']}'";
@@ -188,6 +194,36 @@ class BBDD
 
                 $rt = $usuario;
             }
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Editar un usuario
+    function editarUsuario($id, $tipo, $clave, $telefono){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            //Eliminar caracteres que generen conflicto y encriptar clave
+                $tipo = addslashes(trim(strip_tags($tipo)));
+                $clave = addslashes(trim(strip_tags($clave)));
+                $telefono = addslashes(trim(strip_tags($telefono)));
+
+                $result = '';
+                for($i=0; $i<strlen($clave); $i++) {
+                    $char = substr($clave, $i, 1);
+                    $keychar = substr('Alvaro@1234', ($i % strlen('Alvaro@1234'))-1, 1);
+                    $char = chr(ord($char)+ord($keychar));
+                    $result.=$char;
+                }
+                $clave = base64_encode($result);
+            //
+
+                $sql = "update usuarios set tipo='$tipo', clave='$clave', telefono=telefono where id='$id'";
+                $result = $this->cnn->query($sql);
+                if ($result)$rt = true;
 
         }catch (Exception $e){
             $rt = false;
@@ -219,6 +255,7 @@ class BBDD
         }
         return $rt;
     }
+
 
 
 }

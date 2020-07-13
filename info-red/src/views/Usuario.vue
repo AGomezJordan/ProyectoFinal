@@ -52,7 +52,7 @@
             <v-col cols="12" md="4" class="text-center">
                 Acciones <br>
                 <div class="mt-4">
-                    <v-btn color="success">Editar</v-btn>
+                    <v-btn color="success" :to="{name:'EditarUsuario', params:{id:this.$route.params.id}}">Editar</v-btn>
                     <v-btn color="error">Borrar</v-btn>
                 </div>
             </v-col>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-    import {mapMutations} from 'vuex'
+    import {mapMutations, mapState} from 'vuex'
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
@@ -75,11 +75,13 @@
               porcentaje: 0,
           }
         },
+        computed:{
+            ...mapState(['HOST'])
+        },
         async created(){
             this.cargando = true;
             let jws = KJUR.jws.JWS; //Objeto para tratar JWT
             let secret = "Alvaro1234@asdfgh"; // Clave privada
-            let host = 'http://localhost:80/'
 
             //crear JWT
             let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
@@ -93,9 +95,8 @@
 
             let formd = new FormData();
             formd.append("jwt", jwt)
-            console.log(jwt)
 
-            let response = await axios.post(host+'server/api.php', formd)
+            let response = await axios.post(this.HOST+'server/api.php', formd)
             let datos = response.data
 
 

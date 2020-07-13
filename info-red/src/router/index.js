@@ -38,60 +38,66 @@ Vue.use(VueRouter)
     component: () => import('../views/CrearArticulo.vue'),
     meta: {requiresAuth: true}
   },
-    { //VENTANA PARA CREAR UN USUARIO
-      path: '/Administracion/CrearUsuario',
-      name: 'CrearUsuario',
-      component: () => import('../views/CrearUsuario.vue'),
-      meta: {requiresAdmin: true}
-    },
-    { //VENTANA PARA CONSULTAR ARTICULOS
-      path: '/Administracion/ConsultarArticulos',
-      name: 'ConsultarArticulos',
-      component: () => import('../views/ConsultarArticulos.vue'),
-      meta: {requiresAuth: true}
-    },
-    { //VENTANA PARA VALIDAR ARTICULOS
-      path: '/Administracion/ValidarArticulos/:id',
-      name: 'ValidarArticulos',
-      component: () => import('../views/ValidarArticulos.vue'),
-      meta: {requiresAuth: true}
-    },
-    { //VENTANA PARA EDITAR ARTICULOS
-      path: '/Administracion/EditarArticulo/:id',
-      name: 'EditarArticulo',
-      component: () => import('../views/EditarArticulo.vue'),
-      meta: {requiresAuth: true}
-    },
-    { //VENTANA PARA CREAR CATEGORIAS
-      path: '/Administracion/CrearCategoria',
-      name: 'CrearCategoria',
-      component: () => import('../views/CrearCategoria.vue'),
-      meta: {requiresAdmin: true}
-    },
-    { //VENTANA PARA CREAR NOTAS
-      path: '/Administracion/CrearNota',
-      name: 'CrearNota',
-      component: () => import('../views/CrearNota.vue'),
-      meta: {requiresAuth: true}
-    },
-    { //VENTANA PARA CONSULTAR LOGS
-      path: '/Administracion/Logs',
-      name: 'Logs',
-      component: () => import('../views/Logs.vue'),
-      meta: {requiresAdmin: true}
-    },
-    { //VENTANA PARA CONSULTAR NOTAS
-      path: '/Administracion/ConsultarNotas',
-      name: 'ConsultarNotas',
-      component: () => import('../views/ConsultarNotas.vue'),
-      meta: {requiresAuth: true}
-    },
-    { //VENTANA PARA VER NOTAS
-      path: '/Administracion/notas/:id',
-      name: 'Notas',
-      component: () => import('../views/Nota.vue'),
-      meta: {requiresAuth: true}
-    }
+  { //VENTANA PARA CREAR UN USUARIO
+    path: '/Administracion/CrearUsuario',
+    name: 'CrearUsuario',
+    component: () => import('../views/CrearUsuario.vue'),
+    meta: {requiresAdmin: true}
+  },
+  { //VENTANA PARA EDITAR UN USUARIO
+    path: '/Administracion/EditarUsuario/:id',
+    name: 'EditarUsuario',
+    component: () => import('../views/EditarUsuario.vue'),
+    meta: {requiresAdmin: true}
+  },
+  { //VENTANA PARA CONSULTAR ARTICULOS
+    path: '/Administracion/ConsultarArticulos',
+    name: 'ConsultarArticulos',
+    component: () => import('../views/ConsultarArticulos.vue'),
+    meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA VALIDAR ARTICULOS
+    path: '/Administracion/ValidarArticulos/:id',
+    name: 'ValidarArticulos',
+    component: () => import('../views/ValidarArticulos.vue'),
+    meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA EDITAR ARTICULOS
+    path: '/Administracion/EditarArticulo/:id',
+    name: 'EditarArticulo',
+    component: () => import('../views/EditarArticulo.vue'),
+    meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA CREAR CATEGORIAS
+    path: '/Administracion/CrearCategoria',
+    name: 'CrearCategoria',
+    component: () => import('../views/CrearCategoria.vue'),
+    meta: {requiresAdmin: true}
+  },
+  { //VENTANA PARA CREAR NOTAS
+    path: '/Administracion/CrearNota',
+    name: 'CrearNota',
+    component: () => import('../views/CrearNota.vue'),
+    meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA CONSULTAR LOGS
+    path: '/Administracion/Logs',
+    name: 'Logs',
+    component: () => import('../views/Logs.vue'),
+    meta: {requiresAdmin: true}
+  },
+  { //VENTANA PARA CONSULTAR NOTAS
+    path: '/Administracion/ConsultarNotas',
+    name: 'ConsultarNotas',
+    component: () => import('../views/ConsultarNotas.vue'),
+    meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA VER NOTAS
+    path: '/Administracion/notas/:id',
+    name: 'Notas',
+    component: () => import('../views/Nota.vue'),
+    meta: {requiresAuth: true}
+  }
 ]
 
 const router = new VueRouter({

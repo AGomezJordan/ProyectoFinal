@@ -139,7 +139,7 @@
     import {mapState, mapMutations} from 'vuex'
     import router from '@/router'
     export default {
-        name: "Articulo",
+        name: "ValidarArticulos",
         data(){
             return{
                 dialog: false,
