@@ -20,7 +20,7 @@ export default new Vuex.Store({
     dialogLogin: false,
     mensajeError: '',
     error: false,
-    HOST: 'http://localhost:80/'
+    HOST: 'https://proyectofinallalo.000webhostapp.com/'
   },
   mutations: {
     setBack(state, payload){

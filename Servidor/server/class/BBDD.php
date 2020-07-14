@@ -7,14 +7,14 @@ class BBDD
     private $HOST="localhost";
 
     //produccion
-    //private $US="id14190409_alvaro";
-    //private $PW="Azuqueca99@as";
-    //private $NOMBRE="id14190409_infored";
+    private $US="id14190409_alvaro";
+    private $PW="Azuqueca99@as";
+    private $NOMBRE="id14190409_infored";
 
     //desarrollo
-    private $US="root";
-    private $PW="";
-    private $NOMBRE="infored";
+    //private $US="root";
+    //private $PW="";
+    //private $NOMBRE="infored";
 
     private $cnn;
 
