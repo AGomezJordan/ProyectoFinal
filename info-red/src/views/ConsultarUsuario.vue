@@ -210,7 +210,7 @@
                 v-if="usuarios"
             >
                 <v-row class="text-center usuario mb-4">
-                    <v-col cols="6" md="3">
+                    <v-col cols="6" md="3" class="text-left">
                         <v-icon color="white">mdi-account</v-icon>
                         {{usuario.nombre}} {{usuario.ap1}} {{usuario.ap2}}
                     </v-col>
@@ -235,7 +235,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
 
     export default {
         name: "ConsultarUsuario",
@@ -269,6 +269,8 @@
             }
             this.hoy = year+'-'+mes+'-'+day
             this.obtenerUsuarios()
+        },
+        mounted(){
         },
         methods:{
             async filtrar(){
@@ -396,7 +398,8 @@
                     }
                     this.cargando = false
                 }
-            }
+            },
+            ...mapMutations(['setMensajeError'])
         }
     }
 </script>

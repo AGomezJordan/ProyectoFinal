@@ -42,6 +42,8 @@ class App
             case "filtrarUsuarios":
                 $this->filtrarUsuarios();
                 break;
+            case "consultarLogs":
+                $this->consultarLogs();
 
         }
     }
@@ -281,4 +283,37 @@ class App
             echo '{"status":false, "mensaje": "No tienes permisos"}';
         }
     }
+
+
+    //FUNCIONES LOGS
+
+    //CONSULTAR LOGS
+    private function consultarLogs(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin) {
+            $result = $this->cnn->consultarLogs();
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
 }

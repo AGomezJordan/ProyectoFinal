@@ -62,6 +62,7 @@ if(isset($_REQUEST['jwt'])){
                     break;
 
                 //CONSULTAR USUARIO
+                case 'consultarLogs':
                 case 'consultarUsuarios':
                     if (isset($decoded->id)){
                         $data['id'] = $decoded->id;

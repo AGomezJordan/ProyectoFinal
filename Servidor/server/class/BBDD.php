@@ -518,5 +518,42 @@ class BBDD
     }
 
 
+    //FUNCIONES LOGS
+
+    //Consultar logs
+    function consultarLogs(){
+        $rt = false;
+
+        try{
+
+            $sql = "SELECT l.usuario, l.fecha, u.nombre, u.apellido1, u.apellido2 from logs l, usuarios u ";
+            $sql.= "where l.usuario = u.usuario order by l.fecha desc limit 10";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+
+                $logs=[];
+                $cont = 0;
+
+                while (($row=$result->fetch_assoc())){
+                    $logs[$cont]['usuario'] = $row['usuario'];
+                    $logs[$cont]['fecha'] = $row['fecha'];
+                    $logs[$cont]['nombre'] = $row['nombre'];
+                    $logs[$cont]['ap1'] = $row['apellido1'];
+                    $logs[$cont]['ap2'] = $row['apellido2'];
+                    $cont++;
+                }
+
+                $rt = $logs;
+            }
+
+        }catch(Exception $e){
+            $rt = false;
+        }
+
+        return $rt;
+    }
+
+
 
 }

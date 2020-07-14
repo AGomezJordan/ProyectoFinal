@@ -396,7 +396,7 @@
                                 this.cargando = false
                                 const id = this.$route.params.id
                                 setTimeout(function () {
-                                    router.push({name: 'Usuario', params:{id:id}})
+                                    router.push({name: 'ConsultarUsuario'})
                                 }, 2000)
                             }else{ //Si no esta creado
                                 this.mensaje = '* EL USUARIO NO HA PODIDO EDITARSE *'
