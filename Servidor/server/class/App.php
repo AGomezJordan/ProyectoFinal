@@ -24,17 +24,20 @@ class App
             case "crearUsuario":
                 $this->crearUsuario();
                 break;
-            case "consultarUsuarios";
+            case "consultarUsuarios":
                 $this->consultarUsuarios();
                 break;
-            case "consultarUsuario";
+            case "consultarUsuario":
                 $this->consultarUsuario();
                 break;
-            case "editarUsuario";
+            case "editarUsuario":
                 $this->editarUsuario();
                 break;
-            case "desactivarUsuario";
+            case "desactivarUsuario":
                 $this->desactivarUsuario();
+                break;
+            case "filtrarUsuarios":
+                $this->filtrarUsuarios();
                 break;
 
         }
@@ -209,6 +212,35 @@ class App
                 $token = array(
                     'status' => true,
                     'desactivadp' => false,
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //FILTRAR USUARIOS
+    private function filtrarUsuarios(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin){
+            $result = $this->cnn->filtrarUsuarios($this->data['tipo'], $this->data['estado'], $this->data['fecha']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT
                 $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON

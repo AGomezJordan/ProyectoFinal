@@ -161,7 +161,7 @@ class BBDD
             $id = addslashes(trim(strip_tags($id)));
 
             //Seleccionar datos de usuario
-            $sql = "Select nombre, apellido1, apellido2, usuario, tipo, fechaAlta, telefono from usuarios where id = '$id'";
+            $sql = "Select nombre, apellido1, apellido2, usuario, tipo, fechaAlta, telefono, valido from usuarios where id = '$id'";
             $result = $this->cnn->query($sql);
 
             if ($result->num_rows === 1){
@@ -173,6 +173,14 @@ class BBDD
                 $usuario['tipo'] = $row['tipo'];
                 $usuario['fecha'] = $row['fechaAlta'];
                 $usuario['telefono'] = $row['telefono'];
+                switch ($row['valido']){
+                    case 1:
+                        $usuario['valido']='activado';
+                        break;
+                    case 0:
+                        $usuario['valido']='desactivado';
+                        break;
+                }
 
                 //Selecionar articulos creados
                 $sql = "Select count(articulos) as creados from articulos where autor='{$usuario['usuario']}'";
@@ -242,6 +250,227 @@ class BBDD
                 $rt = true;
             }
         }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Filtras usuarios
+    function filtrarUsuarios($tipo, $estado, $fecha){
+        $rt = false;
+        try{
+            if ($estado !== '' && $tipo !=='' && $fecha !==''){
+                $tipo = addslashes(trim(strip_tags($tipo)));
+                $estado = addslashes(trim(strip_tags($estado)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                switch ($estado){
+                    case 'Activado':
+                        $estado = 1;
+                        break;
+                    case 'Desactivado':
+                        $estado = 0;
+                        break;
+                }
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where valido = $estado and fechaAlta>='$fecha' and tipo = '$tipo'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }elseif($estado !== '' && $tipo !==''){
+                $tipo = addslashes(trim(strip_tags($tipo)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                switch ($estado){
+                    case 'Activado':
+                        $estado = 1;
+                        break;
+                    case 'Desactivado':
+                        $estado = 0;
+                        break;
+                }
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where valido = $estado and tipo = '$tipo'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+
+            }elseif($estado !== '' && $fecha !==''){
+                $estado = addslashes(trim(strip_tags($estado)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                switch ($estado){
+                    case 'Activado':
+                        $estado = 1;
+                        break;
+                    case 'Desactivado':
+                        $estado = 0;
+                        break;
+                }
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where valido = $estado and fechaAlta>='$fecha'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }elseif ($estado !== ''){
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                switch ($estado){
+                    case 'Activado':
+                        $estado = 1;
+                        break;
+                    case 'Desactivado':
+                        $estado = 0;
+                        break;
+                }
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where valido = $estado";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }elseif ($fecha !== '' && $tipo !==''){
+                $tipo = addslashes(trim(strip_tags($tipo)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where fechaAlta>='$fecha' and tipo = '$tipo'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }elseif ($tipo !==''){
+                $tipo = addslashes(trim(strip_tags($tipo)));
+
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where tipo = '$tipo'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }elseif($fecha !== ''){
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $sql = "Select usuario, nombre, apellido1, apellido2, fechaAlta, tipo, id from usuarios ";
+                $sql.="where fechaAlta>='$fecha'";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $usuarios=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $usuarios[$cont]['usuario'] = $row['usuario'];
+                        $usuarios[$cont]['nombre'] = $row['nombre'];
+                        $usuarios[$cont]['ap1'] = $row['apellido1'];
+                        $usuarios[$cont]['ap2'] = $row['apellido2'];
+                        $usuarios[$cont]['fecha'] = $row['fechaAlta'];
+                        $usuarios[$cont]['tipo'] = $row['tipo'];
+                        $usuarios[$cont]['id'] = $row['id'];
+                        $cont++;
+                    }
+
+                    $rt = $usuarios;
+                }
+            }
+
+        }catch(Exception $e){
             $rt = false;
         }
         return $rt;

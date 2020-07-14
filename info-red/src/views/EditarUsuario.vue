@@ -213,6 +213,7 @@
     import decode from 'jwt-decode'
     import axios from 'axios'
     import {mapState} from 'vuex'
+    import router from "../router";
 
     export default {
         name: "EditarUsuario",
@@ -393,6 +394,10 @@
                                 this.mensaje = '* USUARIO EDITADO CORRECTAMENTE *'
                                 this.error = false
                                 this.cargando = false
+                                const id = this.$route.params.id
+                                setTimeout(function () {
+                                    router.push({name: 'Usuario', params:{id:id}})
+                                }, 2000)
                             }else{ //Si no esta creado
                                 this.mensaje = '* EL USUARIO NO HA PODIDO EDITARSE *'
                                 this.error = true

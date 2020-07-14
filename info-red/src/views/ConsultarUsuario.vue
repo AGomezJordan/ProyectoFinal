@@ -54,6 +54,7 @@
                                 color="success"
                                 small
                                 dark
+                                @click="filtrar()"
                         >
                             <v-icon>mdi-check</v-icon>
                         </v-btn>
@@ -62,6 +63,7 @@
                                 small
                                 dark
                                 class="ml-5"
+                                @click="borrar()"
                         >
                             <v-icon>mdi-delete</v-icon>
                         </v-btn>
@@ -125,6 +127,7 @@
                                 color="success"
                                 small
                                 dark
+                                @click="filtrar()"
                         >
                             FILTRAR
                         </v-btn>
@@ -133,6 +136,7 @@
                                 small
                                 dark
                                 class="ml-5"
+                                @click="borrar()"
                         >
                             BORRAR
                         </v-btn>
@@ -153,7 +157,7 @@
             >mdi-arrow-left-bold</v-icon>
         </v-toolbar>
 
-        <!-- ARTICULOS -->
+        <!-- USUARIOS -->
         <div class="pa-5">
             <!-- TITULO -->
             <v-row class="text-center mb-8">
@@ -226,7 +230,7 @@
                 collapseOnScroll: false,
                 tipos:['administrador', 'escritor'],
                 tipo:'',
-                estados: ['Activo', 'Desactivado'],
+                estados: ['Activado', 'Desactivado'],
                 estado:'',
                 fecha: '',
                 hoy: '',
@@ -253,6 +257,74 @@
             this.obtenerUsuarios()
         },
         methods:{
+            async filtrar(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    func: 'filtrarUsuarios',
+                    tipo: this.tipo,
+                    estado: this.estado,
+                    fecha: this.fecha
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+                console.log(jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si esta creado
+                                this.usuarios = decoded.data
+                                this.cargando = false
+                            }else{ //Si no esta creado
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                }else{
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    this.cargando = false
+                }
+            },
+            borrar(){
+                this.tipo = ''
+                this.estado = ''
+                this.fecha = ''
+                this.obtenerUsuarios()
+            },
             async obtenerUsuarios(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT

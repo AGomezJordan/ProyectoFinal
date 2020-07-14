@@ -71,6 +71,8 @@ if(isset($_REQUEST['jwt'])){
                     }
 
                     break;
+
+
                 case 'desactivarUsuario':
                 case 'consultarUsuario':
                     if (isset($decoded->id) && isset($decoded->usuarioID)){
@@ -82,6 +84,8 @@ if(isset($_REQUEST['jwt'])){
                     }
 
                     break;
+
+                //EDITAR USURIO
                 case 'editarUsuario':
                     if (isset($decoded->id) && isset($decoded->tipo) && isset($decoded->usuarioID) && isset($decoded->clave) && isset($decoded->telefono)){
                         $data['id'] = $decoded->id;
@@ -93,8 +97,18 @@ if(isset($_REQUEST['jwt'])){
                     }else{
                         throw new Exception();
                     }
-
                     break;
+
+                case 'filtrarUsuarios':
+                    if(isset($decoded->id) && isset($decoded->tipo) && isset($decoded->estado) && isset($decoded->fecha)){
+                        $data['id']=$decoded->id;
+                        $data['tipo']=$decoded->tipo;
+                        $data['estado']=$decoded->estado;
+                        $data['fecha']=$decoded->fecha;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
             }
         }
 
