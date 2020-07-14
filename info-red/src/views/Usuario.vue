@@ -80,7 +80,20 @@
                 Acciones <br>
                 <div class="mt-4">
                     <v-btn color="success" :to="{name:'EditarUsuario', params:{id:this.$route.params.id}}">Editar</v-btn>
-                    <v-btn color="error" @click="borrar()">Borrar</v-btn>
+                    <v-btn
+                        color="error"
+                       @click="borrar()"
+                        v-if="usuario.valido === 'activado'"
+                    >
+                        Borrar
+                    </v-btn>
+                    <v-btn
+                            color="warning"
+                            @click="activar()"
+                            v-if="usuario.valido === 'desactivado'"
+                    >
+                        Activar
+                    </v-btn>
                 </div>
             </v-col>
         </v-row>
@@ -218,6 +231,71 @@
                                 router.push({name:'ConsultarUsuario'})
                             }else{ //Si no esta desactivado
                                 this.mensaje="EL USUARIO NO HA PODIDO DESACTIVARSE"
+                                this.error = true
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje="Upss... prueba otra vez"
+                            this.error = true
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje="Upss... prueba otra vez"
+                        this.error = true
+                        this.cargando = false
+                    }
+
+                }else{
+                    this.error = true
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    this.cargando = false
+                }
+            },
+            async activar(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    usuarioID: this.$route.params.id,
+                    func: 'activarUsuario',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.activado){ //Si esta activado
+                                this.setMensajeError("USUARIO ACTIVADO CORRECTAMENTE")
+                                this.setError(false)
+                                router.push({name:'ConsultarUsuario'})
+                            }else{ //Si no esta desactivado
+                                this.mensaje="EL USUARIO NO SE HA PODIDO ACTIVAR"
                                 this.error = true
                                 this.cargando = false
                             }

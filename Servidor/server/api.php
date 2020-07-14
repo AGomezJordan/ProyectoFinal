@@ -73,6 +73,7 @@ if(isset($_REQUEST['jwt'])){
                     break;
 
 
+                case 'activarUsuario':
                 case 'desactivarUsuario':
                 case 'consultarUsuario':
                     if (isset($decoded->id) && isset($decoded->usuarioID)){

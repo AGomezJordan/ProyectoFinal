@@ -36,6 +36,9 @@ class App
             case "desactivarUsuario":
                 $this->desactivarUsuario();
                 break;
+            case "activarUsuario":
+                $this->activarUsuario();
+                break;
             case "filtrarUsuarios":
                 $this->filtrarUsuarios();
                 break;
@@ -212,6 +215,34 @@ class App
                 $token = array(
                     'status' => true,
                     'desactivadp' => false,
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //ACRIVAR USUARIO
+    private function activarUsuario(){
+        $valido = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->activarUsuario($this->data['usuarioID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'activado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'activadp' => false,
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT
                 $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON

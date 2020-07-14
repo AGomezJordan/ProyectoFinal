@@ -255,6 +255,22 @@ class BBDD
         return $rt;
     }
 
+    //Activar usuario
+    function activarUsuario($id){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            $sql = "update usuarios set valido=true where id = '$id'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
     //Filtras usuarios
     function filtrarUsuarios($tipo, $estado, $fecha){
         $rt = false;
