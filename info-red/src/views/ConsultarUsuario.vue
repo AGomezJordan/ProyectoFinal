@@ -191,12 +191,24 @@
                     >
                         {{mensajeError}}
                     </v-alert>
+                    <v-alert
+                            class="alerta"
+                            type="error"
+                            v-if="!usuarios"
+                            dismissible
+                    >
+                        NO SE HAN ENCONTRADO USURIOS
+                    </v-alert>
                 </v-col>
                 <v-col cols="0" md="3"></v-col>
             </v-row>
 
             <!-- USUARIOS -->
-            <router-link v-for="usuario in usuarios" :to="{name: 'Usuario', params: {id:usuario.id}}">
+            <router-link
+                v-for="usuario in usuarios"
+                :to="{name: 'Usuario', params: {id:usuario.id}}"
+                v-if="usuarios"
+            >
                 <v-row class="text-center usuario mb-4">
                     <v-col cols="6" md="3">
                         <v-icon color="white">mdi-account</v-icon>
@@ -213,6 +225,8 @@
                     </v-col>
                 </v-row>
             </router-link>
+
+
         </div>
     </div>
 </template>
@@ -276,7 +290,6 @@
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
-                console.log(jwt)
 
                 let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data
@@ -293,10 +306,11 @@
                         //Comprobar status
                         if (decoded.status) { //Datos como los esperabamos
 
-                            if (decoded.data){ //Si esta creado
+                            if (decoded.data){ //Si se ha encontrado
                                 this.usuarios = decoded.data
                                 this.cargando = false
-                            }else{ //Si no esta creado
+                            }else{ //Si no se ha encontrado
+                                this.usuarios = null
                                 this.cargando = false
                             }
 
