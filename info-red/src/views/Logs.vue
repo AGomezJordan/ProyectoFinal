@@ -342,10 +342,9 @@
                 }
             },
             borrar(){
-                this.tipo = ''
-                this.estado = ''
+                this.usuario = ''
                 this.fecha = ''
-                this.obtenerUsuarios()
+                this.obtenerLogs()
             },
         }
     }

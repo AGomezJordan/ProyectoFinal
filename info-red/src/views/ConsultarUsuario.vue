@@ -169,7 +169,7 @@
             </v-row>
 
             <!-- ALERTA -->
-            <v-row class="mensaje">
+            <v-row v-if="control && this.mensajeError" class="mensaje">
                 <v-col cols="0" md="3"></v-col>
                 <v-col cols="12" md="6">
                     <!-- OK -->
@@ -241,6 +241,7 @@
         name: "ConsultarUsuario",
         data(){
             return{
+                control:true,
                 collapseOnScroll: false,
                 tipos:['administrador', 'escritor'],
                 tipo:'',
@@ -256,7 +257,7 @@
         computed:{
             ...mapState(['HOST', 'mensajeError', 'error'])
         },
-        created() {
+       created() {
             let date = new Date()
             let year = date.getFullYear()
             let mes = date.getMonth()
@@ -269,8 +270,10 @@
             }
             this.hoy = year+'-'+mes+'-'+day
             this.obtenerUsuarios()
+            setTimeout(()=> this.control = false, 4000)
         },
-        mounted(){
+        destroyed(){
+          this.setMensajeError(null)
         },
         methods:{
             async filtrar(){

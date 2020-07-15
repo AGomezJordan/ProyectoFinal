@@ -7,14 +7,14 @@ class BBDD
     private $HOST="localhost";
 
     //produccion
-    private $US="id14190409_alvaro";
-    private $PW="Azuqueca99@as";
-    private $NOMBRE="id14190409_infored";
+    //private $US="id14190409_alvaro";
+    //private $PW="Azuqueca99@as";
+    //private $NOMBRE="id14190409_infored";
 
     //desarrollo
-    //private $US="root";
-    //private $PW="";
-    //private $NOMBRE="infored";
+    private $US="root";
+    private $PW="";
+    private $NOMBRE="infored";
 
     private $cnn;
 
@@ -551,6 +551,150 @@ class BBDD
             $rt = false;
         }
 
+        return $rt;
+    }
+
+    //Filtrar logs
+    function filtrarLogs($usuario, $fecha){
+        $rt = false;
+        try{
+            if($usuario !== '' && $fecha !==''){
+                $usuario = addslashes(trim(strip_tags($usuario)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "SELECT l.usuario, l.fecha, u.nombre, u.apellido1, u.apellido2 from logs l, usuarios u ";
+                $sql.="where l.usuario = u.usuario and l.usuario = '$usuario' and l.fecha >= '$fecha' order by l.fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $logs=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $logs[$cont]['usuario'] = $row['usuario'];
+                        $logs[$cont]['fecha'] = $row['fecha'];
+                        $logs[$cont]['nombre'] = $row['nombre'];
+                        $logs[$cont]['ap1'] = $row['apellido1'];
+                        $logs[$cont]['ap2'] = $row['apellido2'];
+                        $cont++;
+                    }
+
+                    $rt = $logs;
+                }
+
+            }elseif($usuario !== ''){
+                $usuario = addslashes(trim(strip_tags($usuario)));
+
+                $sql = "SELECT l.usuario, l.fecha, u.nombre, u.apellido1, u.apellido2 from logs l, usuarios u ";
+                $sql.="where l.usuario = u.usuario and l.usuario = '$usuario' ";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $logs=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $logs[$cont]['usuario'] = $row['usuario'];
+                        $logs[$cont]['fecha'] = $row['fecha'];
+                        $logs[$cont]['nombre'] = $row['nombre'];
+                        $logs[$cont]['ap1'] = $row['apellido1'];
+                        $logs[$cont]['ap2'] = $row['apellido2'];
+                        $cont++;
+                    }
+
+                    $rt = $logs;
+                }
+            }elseif($fecha !== '') {
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "SELECT l.usuario, l.fecha, u.nombre, u.apellido1, u.apellido2 from logs l, usuarios u ";
+                $sql .= "where l.usuario = u.usuario and l.fecha >= '$fecha' ";
+
+                $result = $this->cnn->query($sql);
+                if ($result) {
+                    $logs = [];
+                    $cont = 0;
+
+                    while (($row = $result->fetch_assoc())) {
+                        $logs[$cont]['usuario'] = $row['usuario'];
+                        $logs[$cont]['fecha'] = $row['fecha'];
+                        $logs[$cont]['nombre'] = $row['nombre'];
+                        $logs[$cont]['ap1'] = $row['apellido1'];
+                        $logs[$cont]['ap2'] = $row['apellido2'];
+                        $cont++;
+                    }
+
+                    $rt = $logs;
+                }
+            }
+
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //FUNCIONES ARTICULOS
+
+    //Crear ariculos
+    function crearArticulos($titular, $subtitular, $articulo, $portada, $categoria, $usuarioID){
+        $rt = false;
+        try{
+            $articulo = addslashes(trim(strip_tags($articulo)));
+            $titular = addslashes(trim(strip_tags($titular)));
+            $subtitular = addslashes(trim(strip_tags($subtitular)));
+            $categoria = addslashes(trim(strip_tags($categoria)));
+            $usuarioID = addslashes(trim(strip_tags($usuarioID)));
+
+            //Comprobar que existe la categoria
+            $sql = "select nombre from categoria where nombre='{$categoria}'";
+            $result = $this->cnn->query($sql);
+            //
+
+            if ($result->num_rows === 1){ //Si existe
+                $cat = substr($categoria, 0, 3);
+                $sql = "SELECT max(substring(id, 4)) as id from articulos WHERE id like '{$cat}%'";
+                $result = $this->cnn->query($sql);
+
+                $autor = $this->consultarUsuario($usuarioID)['usuario']; //saber el autor
+
+                $row = $result->fetch_assoc()['id'];
+                if ( $row !== null){ //Si no es el primer articulo en añadirse de ese tipo
+                    $num= $row;
+                    $num++;
+                    $id = "$cat$num";
+
+                    //Insertar datos
+                    @rename($portada['tmp_name'], "img/$id.{$portada['name']}");
+                    $url = $id.$portada['name'];
+                    //$url = "prueba";
+
+
+                    $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
+                    $sql.=" 'noPublicado', '{$url}', '{$categoria}', null)";
+                    $result = $this->cnn->query($sql);
+                    if ($result){$rt = true;};
+
+                }else{ //Si es el primer articulo en añadirse
+                    $num=0;
+                    $id = "$cat$num";
+
+                    //Insertar datos
+                    @rename($portada['tmp_name'], "img/$id.{$portada['name']}");
+                    $url = $id.$portada['name'];
+                    //$url = "prueba";
+
+
+                    $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
+                    $sql.=" 'noPublicado', '{$url}', '{$categoria}', null)";
+                    $result = $this->cnn->query($sql);
+                    if ($result){$rt = true;};
+                }
+            }
+
+        }catch (Exception $e){
+            $rt = false;
+        }
         return $rt;
     }
 

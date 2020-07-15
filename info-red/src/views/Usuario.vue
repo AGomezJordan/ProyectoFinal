@@ -12,7 +12,7 @@
         </v-row>
 
         <!-- ALERTA -->
-        <v-row class="mensaje">
+        <v-row v-if="control && this.mensaje" class="mensaje">
             <v-col cols="0" md="3"></v-col>
             <v-col cols="12" md="6">
                 <!-- OK -->
@@ -22,7 +22,7 @@
                         v-if="mensaje && !error"
                         dismissible
                 >
-                    {{mensajeError}}
+                    {{mensaje}}
                 </v-alert>
 
                 <!-- NOK -->
@@ -32,7 +32,7 @@
                         v-if="mensaje && error"
                         dismissible
                 >
-                    {{mensajeError}}
+                    {{mensaje}}
                 </v-alert>
             </v-col>
             <v-col cols="0" md="3"></v-col>
@@ -111,6 +111,7 @@
         name: "Usuario",
         data(){
           return{
+              control: true,
               usuario: [],
               error:true,
               mensaje: '',
@@ -154,29 +155,35 @@
                     //Comprobar status
                     if (decoded.status) { //Datos como los esperabamos
 
-                        if (decoded.data){ //Si esta creado
+                        if (decoded.data){ //Si hay datos
                             this.usuario = decoded.data
                             this.porcentaje = Math.round((this.usuario.publicado * 100)/ this.usuario.creado);
                             this.cargando = false
-                        }else{ //Si no esta creado
+                        }else{ //Si no hay datos
                             this.cargando = false
+                            this.mensaje= 'No hay datos que mostrar'
+                            setTimeout(()=> this.control = false, 4000)
                         }
 
                     } else { //Datos erroneos
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
                     }
 
                 } else { //Si no es valido
                     this.mensaje = 'Upss... prueba otra vez'
                     this.cargando = false
+                    setTimeout(()=> this.control = false, 4000)
                 }
 
             }else{
                 if (datos.mensaje !== null){
                     this.mensaje = datos.mensaje;
+                    setTimeout(()=> this.control = false, 4000)
                 }else{
                     this.mensaje = 'Server KO... intentelo de nuevo'
+                    setTimeout(()=> this.control = false, 4000)
                 }
                 this.cargando = false
             }
@@ -189,6 +196,7 @@
         destroyed(){
             //DESAPAREZCA LA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(false)
+            this.mensaje = ''
         },
         methods:{
             ...mapMutations(['setBack', 'setMensajeError', 'setError']),
@@ -254,6 +262,7 @@
                     }else{
                         this.mensaje = 'Server KO... intentelo de nuevo'
                     }
+                    setTimeout(()=> this.control = false, 4000)
                     this.cargando = false
                 }
             },

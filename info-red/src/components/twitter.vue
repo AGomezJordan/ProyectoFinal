@@ -83,6 +83,7 @@
 <script>
     import KJUR from 'jsrsasign'
     import axios from 'axios'
+    import {mapState} from 'vuex'
     export default {
         name: "twitter",
         data(){
@@ -90,10 +91,12 @@
               tweets: []
           }
         },
+        computed:{
+          ...mapState(['HOST'])
+        },
         methods:{
             async obtenerTweets(){
                 console.log("entra")
-                let host= 'http://localhost/'
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
                 let secret = "Alvaro1234@asdfgh"; // Clave privada
 
@@ -101,12 +104,11 @@
                 let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
                 let data = {func: 'tweets'}; //Datos de JWT
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
-                //console.log(jwt)
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
 
-                let response = await axios.post(host+'server/api.php', formd)
+                let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data
                 this.tweets = datos.data
             },

@@ -10,7 +10,7 @@
         </v-row>
 
         <!-- ALERTA -->
-        <v-row class="mensaje">
+        <v-row v-if="control && this.mensaje" class="mensaje">
             <v-col cols="0" md="3"></v-col>
             <v-col cols="12" md="6">
                 <!-- OK -->
@@ -201,11 +201,13 @@
     import decode from 'jwt-decode'
     import axios from 'axios'
     import {mapState} from 'vuex'
+    import router from '@/router'
 
     export default {
         name: "CrearUsuario",
         data(){
             return{
+                control: true,
                 cargando: false,
                 usuario: '',
                 password: '',
@@ -255,6 +257,9 @@
         },
         computed:{
           ...mapState(['HOST'])
+        },
+        destroyed(){
+          this.mensaje = ''
         },
         methods:{
             borrarformulario(){
@@ -315,6 +320,9 @@
                                 this.error=false
                                 this.mensaje = '* USUARIO CREADO CORRECTAMENTE *'
                                 this.cargando = false
+                                setTimeout(()=> this.control = false, 2000)
+                                setTimeout(()=> this.mensaje = '', 2000)
+                                setTimeout(()=> router.push({name:'ConsultarUsuario'}), 3000)
                             }else{ //Si no esta creado
                                 this.error=true
                                 this.mensaje = '* EL USUARIO NO HA PODIDO CREARSE *'

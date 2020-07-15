@@ -44,6 +44,11 @@ class App
                 break;
             case "consultarLogs":
                 $this->consultarLogs();
+                break;
+            case "filtrarLogs":
+                $this->filtrarLogs();
+            case "crearArticulo":
+                $this->crearArticulo();
 
         }
     }
@@ -82,8 +87,9 @@ class App
     private function crearUsuario(){
         $admin = $this->cnn->comprobarAdmin($this->data['id']);
         if ($admin) {
-            if (isset($this->data['usuario']) && isset($this->data['clave']) && isset($this->data['nombre']) && isset($this->data['ap1'])
-                && isset($this->data['ap2']) && isset($this->data['tipo']) && isset($this->data['telefono'])) {
+            if (isset($this->data['usuario'], $this->data['clave'], $this->data['nombre'], $this->data['ap1'],
+                $this->data['ap2'], $this->data['tipo'], $this->data['telefono'])) {
+
                 $result = $this->cnn->crearUsuario($this->data['usuario'], $this->data['clave'], $this->data['nombre'], $this->data['ap1'],
                     $this->data['ap2'], $this->data['tipo'], $this->data['telefono']);
 
@@ -106,6 +112,8 @@ class App
                     $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
                     echo $json;
                 }
+            }else{
+                echo '{"status":false, "mensaje": "Algo ha ido mal, reintentelo mas tarde"}';
             }
         }else{
             echo '{"status":false, "mensaje": "No tienes permisos"}';
@@ -310,6 +318,75 @@ class App
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT
                 $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
                 echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //FILTRAR LOGS
+    private function filtrarLogs(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin) {
+            $result = $this->cnn->filtrarLogs($this->data['usuario'], $this->data['fecha']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //FUNCIONES ARTICULO
+
+    //CREAR ARTICULO
+    private function crearArticulo(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
+
+            if (isset($this->data['titular'], $this->data['subtitular'], $this->data['articulo'],
+                $this->data['categoria'], $this->data['id'], $this->data['portada'])) {
+
+                $result = $this->cnn->crearArticulos($this->data['titular'], $this->data['subtitular'], $this->data['articulo'], $this->data['portada'],
+                    $this->data['categoria'], $this->data['id']);
+
+                if ($result) {
+                    $token = array(
+                        'status' => true,
+                        'creado' => true,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                } else {
+                    $token = array(
+                        'status' => true,
+                        'creado' => false,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                }
+            }else{
+                echo '{"status":false, "mensaje": "Algo ha ido mal, reintentelo mas tarde"}';
             }
         }else{
             echo '{"status":false, "mensaje": "No tienes permisos"}';

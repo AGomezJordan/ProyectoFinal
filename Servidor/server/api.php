@@ -44,8 +44,7 @@ if(isset($_REQUEST['jwt'])){
 
                 //CREAR USUARIO
                 case 'crearUsuario':
-                    if (isset($decoded->usuario) && isset($decoded->clave) && isset($decoded->nombre) && isset($decoded->ap1)
-                        && isset($decoded->ap2)&& isset($decoded->tipo)&& isset($decoded->telefono) && isset($decoded->id)){
+                    if (isset($decoded->usuario, $decoded->clave, $decoded->nombre, $decoded->ap1, $decoded->ap2, $decoded->tipo, $decoded->telefono, $decoded->id)){
                         $data['usuario']= $decoded->usuario;
                         $data['clave']= $decoded->clave;
                         $data['nombre']= $decoded->nombre;
@@ -102,12 +101,38 @@ if(isset($_REQUEST['jwt'])){
                     break;
 
                 case 'filtrarUsuarios':
-                    if(isset($decoded->id) && isset($decoded->tipo) && isset($decoded->estado) && isset($decoded->fecha)){
+                    if(isset($decoded->id, $decoded->tipo, $decoded->estado, $decoded->fecha)){
                         $data['id']=$decoded->id;
                         $data['tipo']=$decoded->tipo;
                         $data['estado']=$decoded->estado;
                         $data['fecha']=$decoded->fecha;
                         new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'filtrarLogs':
+                    if(isset($decoded->id, $decoded->usuario, $decoded->fecha)){
+                        $data['id']=$decoded->id;
+                        $data['usuario']=$decoded->usuario;
+                        $data['fecha']=$decoded->fecha;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'crearArticulo':
+                    if(isset($decoded->titular, $decoded->subtitular, $decoded->articulo, $decoded->categoria, $decoded->id, $_FILES['portada'])){
+
+                        $data['titular'] = $decoded->titular;
+                        $data['subtitular'] = $decoded->subtitular;
+                        $data['articulo'] = $decoded->articulo;
+                        $data['categoria'] = $decoded->categoria;
+                        $data['id'] = $decoded->id;
+                        $data['portada'] = $_FILES['portada'];
+
+                        new App($func, $data);
+                        break;
                     }else{
                         throw new Exception();
                     }

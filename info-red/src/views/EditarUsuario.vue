@@ -10,7 +10,7 @@
         </v-row>
 
         <!-- ALERTA -->
-        <v-row class="mensaje">
+        <v-row v-if="control && this.mensaje" class="mensaje">
             <v-col cols="0" md="3"></v-col>
             <v-col cols="12" md="6">
                 <!-- OK -->
@@ -219,6 +219,7 @@
         name: "EditarUsuario",
         data(){
             return{
+                control: true,
                 cargando: false,
                 usuario: '',
                 password: '',
@@ -317,26 +318,36 @@
                             this.cargando = false
                         }else{ //Si no esta creado
                             this.cargando = false
+                            this.mensaje = "No se han podido recuperar los datos"
+                            this.error = true
+                            setTimeout(()=> this.control = false, 4000)
                         }
 
                     } else { //Datos erroneos
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
                     }
 
                 } else { //Si no es valido
                     this.mensaje = 'Upss... prueba otra vez'
                     this.cargando = false
+                    setTimeout(()=> this.control = false, 4000)
                 }
 
             }else{
+                this.error = true
                 if (datos.mensaje !== null){
                     this.mensaje = datos.mensaje;
                 }else{
                     this.mensaje = 'Server KO... intentelo de nuevo'
                 }
+                setTimeout(()=> this.control = false, 4000)
                 this.cargando = false
             }
+        },
+        destroyed(){
+            this.mensaje = ''
         },
         methods:{
             borrarformulario(){
@@ -418,8 +429,8 @@
 
                 }else{
                     if (datos.mensaje !== null){
-                        this.mensaje = datos.mensaje;
                         this.error = true
+                        this.mensaje = datos.mensaje;
                     }else{
                         this.error = true
                         this.mensaje = 'Server KO... intentelo de nuevo'
