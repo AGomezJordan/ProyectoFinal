@@ -287,4 +287,10 @@
         padding-bottom: 30px;
         font-size: 25px;
     }
+    .mensaje{
+        letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
+    }
 </style>

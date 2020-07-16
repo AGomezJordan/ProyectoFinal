@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-8">
+    <div>
 
         <!-- FILTRAR ESCRITORIO -->
         <v-toolbar
@@ -103,7 +103,7 @@
 
         <!-- LOGS -->
         <v-row
-            class="text-center usuario mb-4"
+            class="text-center usuario ma-4 "
             v-for="log in logs"
             v-if="!cargando"
         >

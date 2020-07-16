@@ -76,7 +76,7 @@ if(isset($_REQUEST['jwt'])){
                 case 'activarUsuario':
                 case 'desactivarUsuario':
                 case 'consultarUsuario':
-                    if (isset($decoded->id) && isset($decoded->usuarioID)){
+                    if (isset($decoded->id, $decoded->usuarioID)){
                         $data['id'] = $decoded->id;
                         $data['usuarioID'] = $decoded->usuarioID;
                         new App($func, $data);
@@ -136,6 +136,26 @@ if(isset($_REQUEST['jwt'])){
                     }else{
                         throw new Exception();
                     }
+                case 'consultarArticulos':
+                    new App($func, null);
+                    break;
+                case 'consultarArticulo':
+                    if(isset($decoded->articuloID)){
+                        $data['articuloID'] = $decoded->articuloID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'eliminarArticulo':
+                    if(isset($decoded->id,$decoded->articuloID)){
+                        $data['id'] = $decoded->id;
+                        $data['articuloID'] = $decoded->articuloID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
             }
         }
 

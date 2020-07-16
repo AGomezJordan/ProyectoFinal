@@ -189,29 +189,64 @@
                 <v-col cols="0" md="4"></v-col>
             </v-row>
 
+            <!-- ALERTA -->
+            <v-row v-if="control && (this.mensajeError || !articulos)" class="mensaje">
+                <v-col cols="0" md="3"></v-col>
+                <v-col cols="12" md="6">
+                    <!-- OK -->
+                    <v-alert
+                            class="alerta"
+                            type="success"
+                            v-if="this.mensajeError && !error"
+                            dismissible
+                    >
+                        {{mensajeError}}
+                    </v-alert>
+
+                    <!-- NOK -->
+                    <v-alert
+                            class="alerta"
+                            type="error"
+                            v-if="this.mensajeError && error"
+                            dismissible
+                    >
+                        {{mensajeError}}
+                    </v-alert>
+                    <v-alert
+                            class="alerta"
+                            type="error"
+                            v-if="!articulos"
+                            dismissible
+                    >
+                        {{mensaje}}
+                    </v-alert>
+                </v-col>
+                <v-col cols="0" md="3"></v-col>
+            </v-row>
+
             <!-- LISTA DE CADA ARTÍCULO -->
             <router-link
-                    v-for="n in 10"
+                    v-for="articulo in articulos"
                     :to="{
                             name: 'ValidarArticulos',
                             params:
-                                {id: '21253-dfss3sdf-ersa'}}">
+                                {id: articulo.id}}">
                 <v-row class="text-center usuario mb-4">
 
                     <!-- TITULAR -->
                     <v-col cols="12" md="8">
-                        Maroto pone coto a la cuarentena para extranjeros: “Acabará a la vez que el estado de alarma”
+                        {{articulo.titular}}
                     </v-col>
 
                     <!-- FECHA DE PUBLICACION -->
                     <v-col cols="6" md="2">
-                        02/12/2021
+                        {{articulo.fecha}}
                     </v-col>
 
                     <!-- AUTOR -->
-                    <v-col cols="6" md="2">
+                    <v-col cols="6" md="2" class="text-right">
+                        {{articulo.autor}}
                         <v-icon color="white">mdi-account</v-icon>
-                        PEDRO
                     </v-col>
                 </v-row>
             </router-link>
@@ -220,10 +255,16 @@
 </template>
 
 <script>
+    import {mapState, mapMutations} from 'vuex'
+    import KJUR from 'jsrsasign'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
+
     export default {
         name: "ConsultarArticulos",
         data(){
             return{
+                control: true,
                 collapseOnScroll: false,
                 categorias: ['CUALQUIERA', 'ECONOMÍA', 'POLÍTICA', 'DEPORTES', 'MEDIOAMBIENTE'],
                 categoria: '',
@@ -232,7 +273,8 @@
                 estados: ['CUALQUIERA', 'PUBLICADO', 'PENDIENTE', 'NO PUBLICADO'],
                 estado:'',
                 fecha:'',
-                hoy: ''
+                hoy: '',
+                articulos:{}
             }
         },
         created() {
@@ -247,6 +289,75 @@
                 day='0'+(day);
             }
             this.hoy = year+'-'+mes+'-'+day
+            this.obtenerArticulos();
+            setTimeout(()=> this.control = false, 3000)
+        },
+        destroyed(){
+            this.setMensajeError(null)
+        },
+        computed:{
+          ...mapState(['HOST', 'mensajeError', 'error'])
+        },
+        methods:{
+            ...mapMutations(['setMensajeError']),
+            async obtenerArticulos(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    func: 'consultarArticulos',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si hay articulos
+                                this.articulos = decoded.data
+                                this.cargando = false
+                            }else{ //Si no hay artículos
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                }else{
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    this.cargando = false
+                }
+            }
         }
     }
 </script>
@@ -271,5 +382,11 @@
     }
     a{
         text-decoration: none;
+    }
+    .mensaje{
+        letter-spacing: 3px;
+    }
+    .alerta{
+        border-radius: 30px 30px 30px 30px;
     }
 </style>

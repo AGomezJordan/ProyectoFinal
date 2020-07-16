@@ -646,6 +646,7 @@ class BBDD
             $categoria = addslashes(trim(strip_tags($categoria)));
             $usuarioID = addslashes(trim(strip_tags($usuarioID)));
 
+
             //Comprobar que existe la categoria
             $sql = "select nombre from categoria where nombre='{$categoria}'";
             $result = $this->cnn->query($sql);
@@ -665,7 +666,7 @@ class BBDD
                     $id = "$cat$num";
 
                     //Insertar datos
-                    @rename($portada['tmp_name'], "img/$id.{$portada['name']}");
+                    @rename($portada['tmp_name'], "img/$id{$portada['name']}");
                     $url = $id.$portada['name'];
                     //$url = "prueba";
 
@@ -680,7 +681,7 @@ class BBDD
                     $id = "$cat$num";
 
                     //Insertar datos
-                    @rename($portada['tmp_name'], "img/$id.{$portada['name']}");
+                    @rename($portada['tmp_name'], "img/$id{$portada['name']}");
                     $url = $id.$portada['name'];
                     //$url = "prueba";
 
@@ -698,6 +699,89 @@ class BBDD
         return $rt;
     }
 
+    //Consultar artículos
+    function consultarArticulos(){
+        $rt = false;
+
+        try{
+
+            $sql = "SELECT id, titular, fecha, autor, foto from articulos order by fecha asc";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+
+                $articulos=[];
+                $cont = 0;
+
+                while (($row=$result->fetch_assoc())){
+                    $articulos[$cont]['id'] = $row['id'];
+                    $articulos[$cont]['titular'] = $row['titular'];
+                    $articulos[$cont]['autor'] = $row['autor'];
+                    $articulos[$cont]['fecha'] = $row['fecha'];
+                    $articulos[$cont]['portada'] = $row['foto'];
+                    $cont++;
+                }
+
+                $rt = $articulos;
+            }
+
+        }catch(Exception $e){
+            $rt = false;
+        }
+
+        return $rt;
+    }
+
+    //Consultar Artículo
+    function consultarArticulo($id){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+
+            //Seleccionar datos de usuario
+            $sql = "Select * from articulos where id = '$id'";
+            $result = $this->cnn->query($sql);
+
+            if ($result->num_rows === 1){
+                $articulo = [];
+                $row = $result->fetch_assoc();
+                $articulo['id'] = $row['id'];
+                $articulo['titular'] = $row['titular'];
+                $articulo['subtitular'] = $row['subtitular'];
+                $articulo['articulo'] = $row['articulo'];
+                $articulo['autor'] = $row['autor'];
+                $articulo['fecha'] = $row['fecha'];
+                $articulo['estado'] = $row['estado'];
+                $articulo['portada'] = $row['foto'];
+                $articulo['categoria'] = $row['categoria'];
+                $articulo['publicado'] = $row['publicado'];
+
+                $articulo['articulo'] = str_replace("\n", " <br> ", $articulo['articulo']);
+
+                $rt = $articulo;
+            }
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Eliminar Artículo
+    function eliminarArticulo($id){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            $sql = "DELETE FROM articulos WHERE id = '$id'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
 
 
 }

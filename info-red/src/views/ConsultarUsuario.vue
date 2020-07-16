@@ -1,5 +1,5 @@
 <template>
-    <div class="pa-4">
+    <div>
         <!-- FILTRAR MOVIL -->
         <v-toolbar
                 color="#023059"
@@ -169,7 +169,7 @@
             </v-row>
 
             <!-- ALERTA -->
-            <v-row v-if="control && this.mensajeError" class="mensaje">
+            <v-row v-if="control && (this.mensajeError || !usuarios)" class="mensaje">
                 <v-col cols="0" md="3"></v-col>
                 <v-col cols="12" md="6">
                     <!-- OK -->
@@ -197,7 +197,7 @@
                             v-if="!usuarios"
                             dismissible
                     >
-                        NO SE HAN ENCONTRADO USURIOS
+                        {{mensaje}}
                     </v-alert>
                 </v-col>
                 <v-col cols="0" md="3"></v-col>
@@ -270,7 +270,7 @@
             }
             this.hoy = year+'-'+mes+'-'+day
             this.obtenerUsuarios()
-            setTimeout(()=> this.control = false, 4000)
+            setTimeout(()=> this.control = false, 3000)
         },
         destroyed(){
           this.setMensajeError(null)
@@ -317,25 +317,34 @@
                             }else{ //Si no se ha encontrado
                                 this.usuarios = null
                                 this.cargando = false
+                                this.mensaje = 'Sin resultados'
+                                this.control = true
+                                setTimeout(()=> this.control = false, 3000)
                             }
 
                         } else { //Datos erroneos
                             this.mensaje = 'Upss... prueba otra vez'
                             this.cargando = false
+                            this.control = true
+                            setTimeout(()=> this.control = false, 3000)
                         }
 
                     } else { //Si no es valido
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
+                        this.control = true
+                        setTimeout(()=> this.control = false, 3000)
                     }
 
                 }else{
+                    this.control = true
                     if (datos.mensaje !== null){
                         this.mensaje = datos.mensaje;
                     }else{
                         this.mensaje = 'Server KO... intentelo de nuevo'
                     }
                     this.cargando = false
+                    setTimeout(()=> this.control = false, 3000)
                 }
             },
             borrar(){

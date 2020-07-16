@@ -47,9 +47,19 @@ class App
                 break;
             case "filtrarLogs":
                 $this->filtrarLogs();
+                break;
             case "crearArticulo":
                 $this->crearArticulo();
-
+                break;
+            case "consultarArticulos":
+                $this->consultarArticulos();
+                break;
+            case "consultarArticulo":
+                $this->consultarArticulo();
+                break;
+            case "eliminarArticulo":
+                $this->eliminarArticulo();
+                break;
         }
     }
 
@@ -224,7 +234,7 @@ class App
             } else {
                 $token = array(
                     'status' => true,
-                    'desactivadp' => false,
+                    'desactivado' => false,
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT
                 $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
@@ -393,4 +403,79 @@ class App
         }
     }
 
+    //CONSULTAR ARTICULOS
+    private function consultarArticulos(){
+        $result = $this->cnn->consultarArticulos();
+        if ($result) {
+            $token = array(
+                'status' => true,
+                'data' => $result,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        } else {
+            $token = array(
+                'status' => true,
+                'data' => false,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        }
+    }
+
+    //CONSULTAR ARTICULO
+    private function consultarArticulo(){
+        $result = $this->cnn->consultarArticulo($this->data['articuloID']);
+        if ($result) {
+            $token = array(
+                'status' => true,
+                'data' => $result,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        } else {
+            $token = array(
+                'status' => true,
+                'data' => false,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        }
+    }
+
+    //ELIMINAR ARTICULO
+    private function eliminarArticulo(){
+        $valido = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->eliminarArticulo($this->data['articuloID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => false,
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
 }
