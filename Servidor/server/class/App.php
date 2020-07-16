@@ -141,8 +141,8 @@ class App
 
    //CONSULTAR USUARIOS
     private function consultarUsuarios(){
-        $admin = $this->cnn->comprobarAdmin($this->data['id']);
-        if ($admin) {
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
             $result = $this->cnn->consultarUsuarios();
             if ($result) {
                 $token = array(

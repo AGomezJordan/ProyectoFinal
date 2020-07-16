@@ -273,7 +273,7 @@
                 collapseOnScroll: false,
                 categorias: ['Politica'],
                 categoria: '',
-                autores: ['PEDRO', 'JUAN', 'ALVARO', 'LIDIA', 'JOSE'],
+                autores: [],
                 autor: '',
                 estados: ['publicado', 'despublicado'],
                 estado:'',
@@ -283,6 +283,7 @@
             }
         },
         created() {
+            this.obtenerUsuarios();
             let date = new Date()
             let year = date.getFullYear()
             let mes = date.getMonth()
@@ -295,7 +296,6 @@
             }
             this.hoy = year+'-'+mes+'-'+day
             this.obtenerArticulos();
-            this.obtenerUsuarios()
             setTimeout(()=> this.control = false, 3000)
         },
         destroyed(){
@@ -383,8 +383,6 @@
 
                 let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data
-
-
                 if (datos.status) {
                     //verify JWT
                     let token = datos.token;
