@@ -3,7 +3,7 @@
         <!-- ACCIONES -->
         <div class="acciones">
             <v-row class="text-center">
-                <v-col cols="6" md="3">
+                <v-col cols="4" md="4">
                     <v-btn
                         color="info"
                         @click="$router.push({name: 'EditarArticulo', params:{id: '121asd1231asd'}})"
@@ -11,29 +11,26 @@
                         EDITAR
                     </v-btn>
                 </v-col>
-                <v-col cols="6" md="3">
+                <v-col cols="4" md="4" v-if="user.tipo === 'administrador' && articulo.estado === 'despublicado'">
                     <v-btn
                         color="success"
                         @click="publicar()"
-                        v-if="user.tipo === 'administrador'"
                     >
                         PUBLICAR
                     </v-btn>
                 </v-col>
-                <v-col cols="6" md="3">
+                <v-col cols="4" md="4" v-if="user.tipo === 'administrador' && articulo.estado === 'publicado'">
                     <v-btn
                         color="accent"
                         @click="despublicar()"
-                        v-if="user.tipo === 'administrador'"
                     >
                         DESPUBLICAR
                     </v-btn>
                 </v-col>
-                <v-col cols="6" md="3">
+                <v-col cols="4" md="4" v-if="user.tipo === 'administrador'">
                     <v-btn
                     color="error"
                     @click="dialog = true"
-                    v-if="user.tipo === 'administrador'"
                     >
                         BORRAR
                     </v-btn>
@@ -190,7 +187,6 @@
                 };
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
-                console.log(jwt)
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
@@ -263,7 +259,6 @@
                 };
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
-                console.log(jwt)
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
@@ -321,15 +316,152 @@
                     }
                     this.cargando = false
                 }
+            },
+            async publicar(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
 
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    articuloID: this.$route.params.id,
+                    func: 'publicarArticulo',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+                console.log(jwt)
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.publicado){ //Si se ha eliminado
+                                this.error = false;
+                                this.articulo = decoded.data
+                                this.setMensajeError("ARTICULO PUBLICADO CON EXITO")
+                                this.cargando = false
+                                router.push({name: 'ConsultarArticulos'})
+                            }else{ //Si no se ha eliminado
+                                this.error = true;
+                                this.cargando = false
+                                this.mensaje= 'No se ha podido publicar el articulo'
+                                setTimeout(()=> this.control = false, 4000)
+                            }
+
+                        } else { //Datos erroneos
+                            this.error = true;
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                            setTimeout(()=> this.control = false, 4000)
+                        }
+
+                    } else { //Si no es valido
+                        this.error = true;
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+
+                }else{
+                    this.error = true;
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                        setTimeout(()=> this.control = false, 4000)
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+                    this.cargando = false
+                }
             },
-            publicar(){
-                alert("Publicado")
-                router.push({name: 'ConsultarArticulos'})
-            },
-            despublicar(){
-                alert("Despublicado")
-                router.push({name: 'ConsultarArticulos'})
+            async despublicar(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    articuloID: this.$route.params.id,
+                    func: 'despublicarArticulo',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+                console.log(jwt)
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.despublicado){ //Si se ha eliminado
+                                this.error = false;
+                                this.articulo = decoded.data
+                                this.setMensajeError("ARTICULO DESPUBLICADO CON EXITO")
+                                this.cargando = false
+                                router.push({name: 'ConsultarArticulos'})
+                            }else{ //Si no se ha eliminado
+                                this.error = true;
+                                this.cargando = false
+                                this.mensaje= 'No se ha podido despublicar el articulo'
+                                setTimeout(()=> this.control = false, 4000)
+                            }
+
+                        } else { //Datos erroneos
+                            this.error = true;
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                            setTimeout(()=> this.control = false, 4000)
+                        }
+
+                    } else { //Si no es valido
+                        this.error = true;
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+
+                }else{
+                    this.error = true;
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                        setTimeout(()=> this.control = false, 4000)
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+                    this.cargando = false
+                }
             },
         }
     }

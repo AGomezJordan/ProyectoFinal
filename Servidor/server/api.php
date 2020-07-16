@@ -147,10 +147,25 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+
+                case 'despublicarArticulo':
+                case 'publicarArticulo':
                 case 'eliminarArticulo':
                     if(isset($decoded->id,$decoded->articuloID)){
                         $data['id'] = $decoded->id;
                         $data['articuloID'] = $decoded->articuloID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'filtrarArticulos':
+                    if(isset($decoded->id, $decoded->autor, $decoded->fecha, $decoded->categoria, $decoded->estado)){
+                        $data['id']=$decoded->id;
+                        $data['autor']=$decoded->autor;
+                        $data['fecha']=$decoded->fecha;
+                        $data['categoria']=$decoded->categoria;
+                        $data['estado']=$decoded->estado;
                         new App($func, $data);
                     }else{
                         throw new Exception();

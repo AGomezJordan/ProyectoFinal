@@ -672,7 +672,7 @@ class BBDD
 
 
                     $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
-                    $sql.=" 'noPublicado', '{$url}', '{$categoria}', null)";
+                    $sql.=" 'despublicado', '{$url}', '{$categoria}', null)";
                     $result = $this->cnn->query($sql);
                     if ($result){$rt = true;};
 
@@ -687,7 +687,7 @@ class BBDD
 
 
                     $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
-                    $sql.=" 'noPublicado', '{$url}', '{$categoria}', null)";
+                    $sql.=" 'despublicado', '{$url}', '{$categoria}', null)";
                     $result = $this->cnn->query($sql);
                     if ($result){$rt = true;};
                 }
@@ -778,6 +778,405 @@ class BBDD
                 $rt = true;
             }
         }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Publicar Artículo
+    function publicarArticulo($usuarioid, $articuloid){
+        $rt = false;
+        try{
+            $articuloid = addslashes(trim(strip_tags($articuloid)));
+            $usuarioid = addslashes(trim(strip_tags($usuarioid)));
+
+            $publica = $this->consultarUsuario($usuarioid)['usuario'];
+
+            $sql = "UPDATE articulos set publicado = '$publica', estado='publicado' where id = '$articuloid'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Despublicar Artículo
+    function despublicarArticulo( $articuloid){
+        $rt = false;
+        try{
+            $articuloid = addslashes(trim(strip_tags($articuloid)));
+
+            $sql = "UPDATE articulos set publicado = null, estado='despublicado' where id = '$articuloid'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Filtrar Artículos
+    function filtrarArticulos($autor, $fecha, $categoria, $estado){
+        $rt = false;
+        try{
+            if($autor !== '' && $fecha !=='' && $categoria !=='' && $estado !==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $categoria = addslashes(trim(strip_tags($categoria)));
+                $estado = addslashes(trim(strip_tags($estado)));
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and categoria='$categoria' and estado='$estado' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($autor !== '' && $fecha !=='' && $estado!==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and estado='$estado' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+
+            }elseif($autor !== '' && $categoria !=='' && $estado!==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $categoria = addslashes(trim(strip_tags($fecha)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and estado='$estado' and categoria='$categoria' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+
+            }elseif($categoria !== '' && $fecha !=='' && $estado!==''){
+                $categoria = addslashes(trim(strip_tags($categoria)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where categoria='$categoria' and estado='$estado' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+
+            }elseif($autor !== '' && $fecha !=='' && $categoria !==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $categoria = addslashes(trim(strip_tags($categoria)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and categoria='$categoria' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+
+            }elseif($autor !== '' && $estado !==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and estado='$estado' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($categoria !== '' && $estado !==''){
+                $categoria = addslashes(trim(strip_tags($estado)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where categoria='$categoria' and estado='$estado' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($fecha !== '' && $estado !==''){
+                $fecha = addslashes(trim(strip_tags($fecha)));
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where fecha='$fecha' and estado='$estado' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($autor !== '' && $fecha !==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($autor !== '' && $categoria !==''){
+                $autor = addslashes(trim(strip_tags($autor)));
+                $categoria = addslashes(trim(strip_tags($categoria)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' and categoria='$categoria' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($fecha !== '' && $categoria !=='') {
+                $categoria = addslashes(trim(strip_tags($categoria)));
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where categoria='$categoria' and fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($fecha !== '') {
+                $fecha = addslashes(trim(strip_tags($fecha)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where fecha>='$fecha' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($categoria !=='') {
+                $categoria = addslashes(trim(strip_tags($categoria)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where categoria='$categoria' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($estado !=='') {
+                $estado = addslashes(trim(strip_tags($estado)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where estado='$estado' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }elseif($autor !== ''){
+                $autor = addslashes(trim(strip_tags($autor)));
+
+                $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
+                $sql.="where autor='$autor' order by fecha asc";
+
+                $result = $this->cnn->query($sql);
+                if ($result){
+                    $articulos=[];
+                    $cont = 0;
+
+                    while (($row=$result->fetch_assoc())){
+                        $articulos[$cont]['id'] = $row['id'];
+                        $articulos[$cont]['titular'] = $row['titular'];
+                        $articulos[$cont]['autor'] = $row['autor'];
+                        $articulos[$cont]['fecha'] = $row['fecha'];
+                        $articulos[$cont]['portada'] = $row['foto'];
+                        $cont++;
+                    }
+
+                    $rt = $articulos;
+                }
+            }
+
+        }catch(Exception $e){
             $rt = false;
         }
         return $rt;
