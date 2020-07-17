@@ -7,9 +7,9 @@ class BBDD
     private $HOST="localhost";
 
     //produccion
-    //private $US="id14190409_alvaro";
-    //private $PW="Azuqueca99@as";
-    //private $NOMBRE="id14190409_infored";
+//    private $US="id14190409_alvaro";
+//    private $PW="Azuqueca99@as";
+//    private $NOMBRE="id14190409_infored";
 
     //desarrollo
     private $US="root";
@@ -183,7 +183,7 @@ class BBDD
                 }
 
                 //Selecionar articulos creados
-                $sql = "Select count(articulos) as creados from articulos where autor='{$usuario['usuario']}'";
+                $sql = "Select count(articulo) as creados from articulos where autor='{$usuario['usuario']}'";
                 $result = $this->cnn->query($sql);
                 if ($result){
                     $usuario['creado'] = $result->fetch_assoc()['creados'];
@@ -192,10 +192,10 @@ class BBDD
                 }
 
                 //Selecionar articulos publicados
-                $sql = "Select count(articulos) as creados from articulos where autor='{$usuario['usuario']}' and estado='publicado'";
+                $sql = "Select count(articulo) as publicado from articulos where autor='{$usuario['usuario']}' and estado='publicado'";
                 $result = $this->cnn->query($sql);
                 if ($result){
-                    $usuario['publicado'] = $result->num_rows;
+                    $usuario['publicado'] = $result->fetch_assoc()['publicado'];
                 }else{
                     $usuario['publicado'] = 0;
                 }
@@ -705,7 +705,7 @@ class BBDD
 
         try{
 
-            $sql = "SELECT id, titular, fecha, autor, foto from articulos order by fecha asc";
+            $sql = "SELECT id, titular, fecha, autor, foto, categoria from articulos where estado='publicado' order by fecha asc";
             $result = $this->cnn->query($sql);
 
             if ($result){
@@ -719,6 +719,7 @@ class BBDD
                     $articulos[$cont]['autor'] = $row['autor'];
                     $articulos[$cont]['fecha'] = $row['fecha'];
                     $articulos[$cont]['portada'] = $row['foto'];
+                    $articulos[$cont]['categoria'] = $row['categoria'];
                     $cont++;
                 }
 
@@ -763,6 +764,17 @@ class BBDD
 
         }catch (Exception $e){
             $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Articulo para editarlo
+    function consultarArticuloEditar($id){
+        $rt = false;
+        $result= $this->consultarArticulo($id);
+        if($result){
+            $result['articulo'] = str_replace("<br>", " \n", $result['articulo']);
+            $rt = $result;
         }
         return $rt;
     }
@@ -1182,5 +1194,30 @@ class BBDD
         return $rt;
     }
 
+    //Editar Articulo
+    function editarArticulo($id, $titular, $subtitular, $articulo, $categoria, $usuarioID){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            //Eliminar caracteres que generen conflicto y encriptar clave
+            $titular = addslashes(trim(strip_tags($titular)));
+            $subtitular = addslashes(trim(strip_tags($subtitular)));
+            $articulo = addslashes(trim(strip_tags($articulo)));
+            $categoria = addslashes(trim(strip_tags($categoria)));
+            $usuarioID = addslashes(trim(strip_tags($usuarioID)));
+
+            $autor = $this->consultarUsuario($usuarioID)['usuario'];
+
+            $sql = "update articulos set titular='$titular', subtitular='$subtitular', articulo='$articulo', categoria='$categoria' ";
+            $sql.="where id='$id' and autor = '$autor'";
+
+            $result = $this->cnn->query($sql);
+            if ($result)$rt = true;
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
 
 }

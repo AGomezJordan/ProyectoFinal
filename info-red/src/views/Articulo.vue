@@ -14,37 +14,16 @@
                 >
                     <v-card-text align="center">
                         <div class="foto">
-                            <img src="../assets/portada.jpg">
+                            <img :src="HOST+'server/img/'+articulo.portada">
                         </div>
                     </v-card-text>
-                    <v-card-title class="headline">{{this.$route.params.titular}}</v-card-title>
-                    <v-card-subtitle class="title">Esto puede causar mucho revuelo a quien no lo quiera ver</v-card-subtitle>
-                    <v-card-text class="text-justify informacion">
-                        El director adjunto operativo de la Guardia Civil, Laurentino Ceña, ha presentado su
-                        dimisión ante el Ministerio del Interior como gesto de apoyo a Diego Pérez de los Cobos.
-                        Ceña tenía previsto jubilarse la semana que viene, pero ha adelantado su retiro tras
-                        la polémica ocasionada por el cese del jefe de la Comandancia de Madrid.<br><br>
-
-                        Caña era el segundo de la Benemérita por detrás de la directora general, María Gámez,
-                        cuyo nombramiento es político. Ceña tenía que haberse jubilado el pasado mes de marzo,
-                        pero acordó con el Ministerio del Interior que permanecería en su cargo hasta el 2 de
-                        junio. Ahora, ha decidido marcharse como gesto de apoyo con Pérez de los Cobos, que fue
-                        destituido ayer por el ministro del ramo, Fernando Grande-Marlaska.<br><br>
-
-                        Pérez de los Cobos redactó un informe para el Juzgado de Instrucción número 51 de Madrid
-                        sobre los presuntos contagios de coronavirus en los actos públicos del pasado 8 de marzo
-                        como la manifestación feminista. El jefe de la Comandancia de Madrid no informó de sus
-                        pesquisas al Ministerio, por lo que Grande-Marlaska le destituyó por “pérdida de confianza”.<br><br>
-
-                        “El teniente general director adjunto operativo de la Guardia Civil acaba de presentar su
-                        dimisión irrevocable al Ministerio. Lo hace por no estar de acuerdo con el cese del coronel
-                        Pérez de los Cobos por lo injusto del mismo. Opta por la honra en vez de por los barcos.
-                        Los guardias civiles aplaudimos el gesto que le honra. El cargo exige dignidad como la
-                        demostrada”, han señalado fuentes de la Guardia Civil.
+                    <v-card-title class="headline">{{articulo.titular}}</v-card-title>
+                    <v-card-subtitle class="title">{{articulo.subtiular}}</v-card-subtitle>
+                    <v-card-text class="text-justify informacion" v-html="articulo.articulo">
                     </v-card-text>
                     <v-card-text>
-                        Autor: Pedro gonzalez<br>
-                        Fecha: 26-02-2020 15:21
+                        Autor: {{articulo.autor}}<br>
+                        Fecha: {{articulo.fecha}}
                     </v-card-text>
                 </v-card>
             </div>
@@ -54,23 +33,31 @@
 
 <script>
     import Twitter from "../components/twitter";
+    import KJUR from 'jsrsasign'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
     import {mapState, mapMutations} from 'vuex'
     export default {
         name: "Articulo",
         data(){
             return{
-                movil: false
+                movil: false,
+                cargando: false,
+                articulo: {}
             }
         },
         components: {
             Twitter,
-            ...mapState(['back'])
+        },
+        computed:{
+            ...mapState(['HOST'])
         },
         created() {
             this.setBack(true)
             if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
                 this.movil = true;
             }
+            this.obtenerArticulo()
         },
         mounted(){
             this.setBack(true)
@@ -80,7 +67,76 @@
             this.setBack(false)
         },
         methods:{
-            ...mapMutations(['setBack'])
+            ...mapMutations(['setBack']),
+            async obtenerArticulo(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    articuloID: this.$route.params.id,
+                    func: 'consultarArticulo',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si hay datos
+                                this.error = false;
+                                this.articulo = decoded.data
+                                this.cargando = false
+                            }else{ //Si no hay datos
+                                this.error = true;
+                                this.cargando = false
+                                this.mensaje= 'No hay datos que mostrar'
+                                setTimeout(()=> this.control = false, 4000)
+                            }
+
+                        } else { //Datos erroneos
+                            this.error = true;
+                            this.mensaje = 'Upss... prueba otra vez'
+                            this.cargando = false
+                            setTimeout(()=> this.control = false, 4000)
+                        }
+
+                    } else { //Si no es valido
+                        this.error = true;
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+
+                }else{
+                    this.error = true;
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                        setTimeout(()=> this.control = false, 4000)
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+                    this.cargando = false
+                }
+            },
         }
     }
 </script>

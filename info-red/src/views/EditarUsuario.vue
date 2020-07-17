@@ -405,10 +405,10 @@
                                 this.mensaje = '* USUARIO EDITADO CORRECTAMENTE *'
                                 this.error = false
                                 this.cargando = false
-                                const id = this.$route.params.id
-                                setTimeout(function () {
-                                    router.push({name: 'ConsultarUsuario'})
-                                }, 2000)
+                                this.control = true
+                                setTimeout(()=> this.control = false, 2000)
+                                setTimeout(()=> this.mensaje = '', 2000)
+                                setTimeout(()=> router.push({name: 'ConsultarUsuario', params:{id:this.$route.params.id}}), 2000)
                             }else{ //Si no esta creado
                                 this.mensaje = '* EL USUARIO NO HA PODIDO EDITARSE *'
                                 this.error = true
@@ -419,15 +419,22 @@
                             this.mensaje = 'Upss... prueba otra vez'
                             this.error = true
                             this.cargando = false
+                            this.control = true
+                            setTimeout(()=> this.control = false, 2000)
+                            setTimeout(()=> this.mensaje = '', 2000)
                         }
 
                     } else { //Si no es valido
                         this.mensaje = 'Upss... prueba otra vez'
                         this.error = true
                         this.cargando = false
+                        this.control = true
+                        setTimeout(()=> this.control = false, 2000)
+                        setTimeout(()=> this.mensaje = '', 2000)
                     }
 
                 }else{
+                    this.control = true
                     if (datos.mensaje !== null){
                         this.error = true
                         this.mensaje = datos.mensaje;
@@ -435,6 +442,8 @@
                         this.error = true
                         this.mensaje = 'Server KO... intentelo de nuevo'
                     }
+                    setTimeout(()=> this.control = false, 2000)
+                    setTimeout(()=> this.mensaje = '', 2000)
                     this.cargando = false
                 }
             }

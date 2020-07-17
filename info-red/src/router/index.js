@@ -10,7 +10,7 @@ Vue.use(VueRouter)
     component: () => import('../views/Home.vue')
   },
   { //MOSTRAR UN ARTICULO
-    path: '/Articulo/:titular',
+    path: '/Articulo/:id',
     name: 'Articulo',
     component: () => import('../views/Articulo.vue')
   },

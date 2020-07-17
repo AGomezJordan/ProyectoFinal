@@ -12,7 +12,7 @@
             <v-row>
                 <!-- ARTICULOS -->
                 <v-col
-                    v-for="n in 50"
+                    v-for="articulo in articulos"
                     cols="12"
                     md="6"
                     lg="4"
@@ -25,22 +25,27 @@
                             :to="{
                                 name: 'Articulo',
                                 params:
-                                    {titular: 'Maroto pone coto a la cuarentena para extranjeros: “Acabará a la vez que el estado de alarma”'}}"
+                                    {id: articulo.id}}"
                         >
                             <!-- PORTADA -->
                             <v-card-text>
                                 <div class="foto">
-                                    <img src="../assets/portada.jpg">
+                                    <img :src="HOST+'server/img/'+articulo.portada">
                                 </div>
                             </v-card-text>
 
                             <!-- TITULAR -->
                             <v-card-text class="text-justify title white--text">
-                                Maroto pone coto a la cuarentena para extranjeros: “Acabará a la vez que el estado de alarma”
+                                {{articulo.titular}}
                             </v-card-text>
 
-                            <!-- FECHA -->
-                            <v-card-text>15-05-2020</v-card-text>
+                            <!-- FECHA Y CATEGORIA-->
+                            <v-card-text>
+                                <v-row>
+                                    <v-col cols="6" class="text-left">{{articulo.fecha}}</v-col>
+                                    <v-col cols="6" class="text-right">{{articulo.categoria}}</v-col>
+                                </v-row>
+                            </v-card-text>
                         </v-card>
                     </div>
                 </v-col>
@@ -50,25 +55,93 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import KJUR from 'jsrsasign'
+import decode from 'jwt-decode'
+import axios from 'axios'
+import router from '@/router'
+import {mapActions, mapState} from 'vuex'
 import Twitter from "../components/twitter";
 
 export default {
   name: 'Home',
     data(){
       return{
-          movil: false
+          movil: false,
+          articulos: {},
+          cargando: false
       }
     },
     components: {Twitter},
     methods: {
-      ...mapActions(['tweet'])
-  },
+        ...mapActions(['tweet']),
+        async obtenerArticulos(){
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                func: 'consultarArticulos',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+
+            let response = await axios.post(this.HOST+'server/api.php', formd)
+            let datos = response.data
+
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si hay articulos
+                            this.articulos = decoded.data
+                            this.cargando = false
+                        }else{ //Si no hay artículos
+                            this.cargando = false
+                        }
+
+                    } else { //Datos erroneos
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                    }
+
+                } else { //Si no es valido
+                    this.mensaje = 'Upss... prueba otra vez'
+                    this.cargando = false
+                }
+
+            }else{
+                if (datos.mensaje !== null){
+                    this.mensaje = datos.mensaje;
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                }
+                this.cargando = false
+            }
+        },
+    },
+    computed:{
+      ...mapState(['HOST'])
+    },
     created() {
         if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
             this.movil = true;
         }
-    }
+        this.obtenerArticulos()
+    },
 }
 </script>
 <style scoped>

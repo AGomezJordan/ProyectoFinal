@@ -96,7 +96,6 @@
         },
         methods:{
             async obtenerTweets(){
-                console.log("entra")
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
                 let secret = "Alvaro1234@asdfgh"; // Clave privada
 

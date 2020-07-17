@@ -216,6 +216,10 @@ export default {
     },
     mounted(){
         this.setBack(false)
+        console.log("hola")
+    },
+    updated(){
+
     },
     computed:{
           ...mapState(['back', 'admin', 'user', 'dialogLogin', 'mensajeError'])
@@ -231,8 +235,10 @@ export default {
                 usuario: this.$v.usuario.$model,
                 clave: this.$v.password.$model
             })
-            this.$v.usuario.$model = null;
-            this.$v.password.$model = null;
+            // setTimeout(()=>this.usuario = null, 3000)
+            // setTimeout(()=>this.password = null, 3000)
+            // setTimeout(()=>this.nameRules = null, 300)
+            // setTimeout(()=>this.passRules = null, 300)
         },
         logOut(){
             this.dialoga = false

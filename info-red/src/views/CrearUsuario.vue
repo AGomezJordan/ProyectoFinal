@@ -262,6 +262,14 @@
           this.mensaje = ''
         },
         methods:{
+            borrarRules(){
+                this.usuarioRules = null
+                this.passwordRules = null
+                this.password2Rules = null
+                this.apellidoRules = null
+                this.nombreRules = null
+                this.telefonoRules = null
+            },
             borrarformulario(){
                 this.temp = false
                 this.$v.usuario.$model = ''
@@ -294,7 +302,6 @@
                     tipo: this.$v.tipoUsuario.$model,
                     telefono: this.$v.telefono.$model
                 };
-                this.borrarformulario()
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
 
@@ -320,6 +327,8 @@
                                 this.error=false
                                 this.mensaje = '* USUARIO CREADO CORRECTAMENTE *'
                                 this.cargando = false
+                                this.borrarRules()
+                                this.borrarformulario()
                                 setTimeout(()=> this.control = false, 2000)
                                 setTimeout(()=> this.mensaje = '', 2000)
                                 setTimeout(()=> router.push({name:'ConsultarUsuario'}), 3000)

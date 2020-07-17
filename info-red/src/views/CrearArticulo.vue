@@ -170,7 +170,8 @@
             titular:{required, maxLength:maxLength(255)},
             subtitular:{required,  maxLength:maxLength(255)},
             categoria:{required},
-            articulo:{required, maxLength:maxLength(4294967295)}
+            articulo:{required, maxLength:maxLength(4294967295)},
+            portada:{required}
         },
         destroyed(){
             this.mensaje = ''
@@ -179,6 +180,12 @@
           ...mapState(['HOST'])
         },
         methods: {
+            borrarRules(){
+              this.nameRules = null
+              this.subRules = null
+              this.articuloRules = null
+              this.portadaRules = null
+            },
             borrarformulario() {
                 this.$v.titular.$model = '';
                 this.$v.subtitular.$model = '';
@@ -214,7 +221,6 @@
                 let formd = new FormData();
                 formd.append("jwt", jwt)
                 formd.append("portada", this.portada)
-                this.borrarformulario()
 
                 let response = await axios.post(this.HOST + 'server/api.php', formd)
                 let datos = response.data
@@ -234,8 +240,10 @@
                                 this.error=false
                                 this.mensaje = 'ARTICULO CREADO CORRECTAMENTE'
                                 this.cargando = false
-                                setTimeout(()=> this.control = false, 2000)
-                                setTimeout(()=> this.mensaje = '', 2000)
+                                this.borrarRules()
+                                this.borrarformulario()
+                                setTimeout(()=> this.control = false, 3000)
+                                setTimeout(()=> this.mensaje = '', 3000)
                                 setTimeout(()=> router.push({name:'ConsultarArticulos'}), 3000)
                             }else{ //Si no esta creado
                                 this.error=true

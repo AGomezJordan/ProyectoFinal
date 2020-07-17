@@ -6,7 +6,7 @@
                 <v-col cols="4" md="4">
                     <v-btn
                         color="info"
-                        @click="$router.push({name: 'EditarArticulo', params:{id: '121asd1231asd'}})"
+                        @click="$router.push({name: 'EditarArticulo', params:{id: $route.params.id}})"
                     >
                         EDITAR
                     </v-btn>

@@ -139,6 +139,7 @@ if(isset($_REQUEST['jwt'])){
                 case 'consultarArticulos':
                     new App($func, null);
                     break;
+                case 'consultarArticuloEditar':
                 case 'consultarArticulo':
                     if(isset($decoded->articuloID)){
                         $data['articuloID'] = $decoded->articuloID;
@@ -166,6 +167,19 @@ if(isset($_REQUEST['jwt'])){
                         $data['fecha']=$decoded->fecha;
                         $data['categoria']=$decoded->categoria;
                         $data['estado']=$decoded->estado;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'editarArticulo':
+                    if(isset($decoded->id, $decoded->articuloID, $decoded->titular, $decoded->subtitular, $decoded->categoria, $decoded->articulo)){
+                        $data['id']=$decoded->id;
+                        $data['articuloID']=$decoded->articuloID;
+                        $data['titular']=$decoded->titular;
+                        $data['subtitular']=$decoded->subtitular;
+                        $data['categoria']=$decoded->categoria;
+                        $data['articulo']=$decoded->articulo;
                         new App($func, $data);
                     }else{
                         throw new Exception();
