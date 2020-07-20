@@ -62,6 +62,7 @@
                                           label="Usuario"
                                           color="success"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
 
@@ -73,6 +74,7 @@
                                           dark
                                           color="success"
                                           v-model="$v.tipoUsuario.$model"
+                                          :loading="cargando"
                                   ></v-select>
                               </v-col>
 
@@ -86,6 +88,7 @@
                                           color="success"
                                           type="password"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
 
@@ -99,6 +102,7 @@
                                           color="success"
                                           type="password"
                                           dark
+                                          :loading="cargando"
                                   ></v-text-field>
                               </v-col>
                           </v-row>
@@ -122,6 +126,7 @@
                                             label="Primer apellido"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
@@ -134,6 +139,7 @@
                                             label="Segundo apellido"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
@@ -146,6 +152,7 @@
                                             label="Nombre"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
 
@@ -159,6 +166,7 @@
                                             label="Telefono"
                                             color="success"
                                             dark
+                                            :loading="cargando"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>

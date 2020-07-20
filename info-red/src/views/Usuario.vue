@@ -39,7 +39,7 @@
         </v-row>
 
         <!-- ESTADISTICAS DEL USUARIO -->
-        <v-row class="estadistica">
+        <v-row v-if="!cargando" class="estadistica">
 
             <v-col cols="12" md="4" class="text-center">
                 Articulos Creados<br> <div class="mt-3 datos">{{usuario.creado}}</div>
@@ -97,12 +97,18 @@
                 </div>
             </v-col>
         </v-row>
+
+        <!-- LOADER -->
+        <div v-if="cargando" class="loader">
+            <ScaleLoader color="#4ebfb4" height="50px" width="8px"></ScaleLoader>
+        </div>
     </div>
 </template>
 
 <script>
     import {mapMutations, mapState} from 'vuex'
     import KJUR from 'jsrsasign'
+    import Loader from 'vue-spinner/src/ScaleLoader'
     import decode from 'jwt-decode'
     import axios from 'axios'
     import router from '@/router'
@@ -121,6 +127,9 @@
         },
         computed:{
             ...mapState(['HOST'])
+        },
+        components:{
+            Loader
         },
         async created(){
             this.cargando = true;
@@ -360,5 +369,9 @@
     }
     .alerta{
         border-radius: 30px 30px 30px 30px;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

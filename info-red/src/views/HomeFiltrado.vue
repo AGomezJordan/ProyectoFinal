@@ -70,7 +70,7 @@ import {mapActions, mapState} from 'vuex'
 import Twitter from "../components/twitter";
 
 export default {
-  name: 'Home',
+  name: 'HomeFiltrado',
     data(){
       return{
           movil: false,
@@ -79,9 +79,20 @@ export default {
       }
     },
     components: {Twitter, ScaleLoader},
+    created() {
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            this.movil = true;
+        }
+        this.obtenerArticulos()
+    },
+    beforeRouteUpdate(){
+        console.log("obteniendo articulos "+this.$route.params.categoria)
+      this.obtenerArticulos()
+    },
     methods: {
         ...mapActions(['tweet']),
         async obtenerArticulos(){
+            //console.log("obteniendo articulos "+this.$route.params.categoria)
             this.cargando = true;
             let jws = KJUR.jws.JWS; //Objeto para tratar JWT
             let secret = "Alvaro1234@asdfgh"; // Clave privada
@@ -89,8 +100,12 @@ export default {
             //crear JWT
             let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
             let data = {
-                id: localStorage.getItem('usuarioID'),
-                func: 'consultarArticulos',
+                id: '',
+                func: 'filtrarArticulos',
+                autor: '',
+                fecha: '',
+                categoria: this.$route.params.categoria,
+                estado: ''
             };
 
             let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
@@ -142,12 +157,6 @@ export default {
     },
     computed:{
       ...mapState(['HOST'])
-    },
-    created() {
-        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-            this.movil = true;
-        }
-        this.obtenerArticulos()
     },
 }
 </script>

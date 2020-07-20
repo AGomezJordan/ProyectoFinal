@@ -75,8 +75,15 @@ class App
             case 'editarArticulo':
                 $this->editarArticulo();
                 break;
+            case 'crearCategoria':
+                $this->crearCategoria();
+                break;
+            case 'consultarCategorias':
+                $this->consultarCategorias();
+                break;
         }
     }
+
 
     //FUNCIONES USUARIO
 
@@ -318,6 +325,8 @@ class App
     }
 
 
+
+
     //FUNCIONES LOGS
 
     //CONSULTAR LOGS
@@ -377,6 +386,10 @@ class App
             echo '{"status":false, "mensaje": "No tienes permisos"}';
         }
     }
+
+
+
+
 
     //FUNCIONES ARTICULO
 
@@ -576,30 +589,25 @@ class App
 
     //FILTRAR ARTICULOS
     private function filtrarArticulos(){
-        $valido = $this->cnn->comprobarValido($this->data['id']);
-        if ($valido) {
-            $result = $this->cnn->filtrarArticulos($this->data['autor'], $this->data['fecha'], $this->data['categoria'], $this->data['estado']);
-            if ($result) {
-                $token = array(
-                    'status' => true,
-                    'data' => $result,
+        $result = $this->cnn->filtrarArticulos($this->data['autor'], $this->data['fecha'], $this->data['categoria'], $this->data['estado']);
+        if ($result) {
+            $token = array(
+                'status' => true,
+                'data' => $result,
 
-                );
-                $jwt = JWT::encode($token, $this->key); //Generamos JWT
-                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
-                echo $json;
-            } else {
-                $token = array(
-                    'status' => true,
-                    'data' => false,
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        } else {
+            $token = array(
+                'status' => true,
+                'data' => false,
 
-                );
-                $jwt = JWT::encode($token, $this->key); //Generamos JWT
-                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
-                echo $json;
-            }
-        }else{
-            echo '{"status":false, "mensaje": "No tienes permisos"}';
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
         }
     }
 
@@ -632,4 +640,68 @@ class App
             echo '{"status":false, "mensaje": "No tienes permisos"}';
         }
     }
+
+
+    //FUNCIONES CATEGORIA
+
+    //CREAR CATEGORIA
+    private function crearCategoria(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin) {
+
+            if (isset($this->data['nombre'], $this->data['descripcion'])) {
+
+                $result = $this->cnn->crearCategoria($this->data['nombre'], $this->data['descripcion']);
+
+                if ($result) {
+                    $token = array(
+                        'status' => true,
+                        'creado' => true,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                } else {
+                    $token = array(
+                        'status' => true,
+                        'creado' => false,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                }
+            }else{
+                echo '{"status":false, "mensaje": "Algo ha ido mal, reintentelo mas tarde"}';
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //CONSULTAR CATEGORIAS
+    private function consultarCategorias(){
+        $result = $this->cnn->consultarCategorias();
+        if ($result) {
+            $token = array(
+                'status' => true,
+                'data' => $result,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        } else {
+            $token = array(
+                'status' => true,
+                'data' => false,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        }
+    }
+
 }

@@ -20,10 +20,14 @@ export default new Vuex.Store({
     dialogLogin: false,
     mensajeError: '',
     error: false,
+    tweets:null,
     //HOST: 'https://proyectofinallalo.000webhostapp.com/'
     HOST: 'http://localhost:80/'
   },
   mutations: {
+    setTweets(state, payload){
+      state.tweets = payload
+    },
     setBack(state, payload){
       state.back = payload
     },

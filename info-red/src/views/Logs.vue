@@ -119,8 +119,10 @@
             </v-col>
         </v-row>
 
-        <!-- CARGANDO -->
-        <div v-if="cargando"></div>
+        <!-- LOADER -->
+        <div v-if="cargando" class="loader">
+            <Loader color="#4ebfb4" height="50px" width="8px"></Loader>
+        </div>
     </div>
 </template>
 
@@ -128,6 +130,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
+    import Loader from 'vue-spinner/src/ScaleLoader'
     import {mapState} from 'vuex'
     export default {
         name: "logs",
@@ -142,6 +145,9 @@
               fecha: '',
               hoy: '',
           }
+        },
+        components:{
+          Loader
         },
         computed:{
           ...mapState(['HOST']),
@@ -373,5 +379,9 @@
     }
     .alerta{
         border-radius: 30px 30px 30px 30px;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

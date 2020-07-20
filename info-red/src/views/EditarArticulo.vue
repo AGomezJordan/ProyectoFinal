@@ -51,6 +51,7 @@
                                 label="Titular"
                                 color="success"
                                 dark
+                                :loading="cargando"
                         ></v-text-field>
                     </v-col>
                     <!-- SUBTITULAR -->
@@ -62,6 +63,7 @@
                                 label="SubTitular"
                                 color="success"
                                 dark
+                                :loading="cargando"
                         ></v-text-field>
                     </v-col>
                     <!-- ARTICULO -->
@@ -74,6 +76,7 @@
                                 rows="1"
                                 color="success"
                                 dark
+                                :loading="cargando"
                                 v-model="$v.articulo.$model"
                         ></v-textarea>
                     </v-col>
@@ -89,6 +92,7 @@
                                 @change="validateFoto()"
                                 accept="image/jpeg"
                                 v-model="portada"
+                                :loading="cargando"
                         ></v-file-input>
                     </v-col>
                     <!-- CATEGORIA -->
@@ -98,6 +102,7 @@
                                 label="Categoría"
                                 dark
                                 color="success"
+                                :loading="cargando"
                                 v-model="$v.categoria.$model"
                         ></v-select>
                     </v-col>

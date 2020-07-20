@@ -705,7 +705,7 @@ class BBDD
 
         try{
 
-            $sql = "SELECT id, titular, fecha, autor, foto, categoria from articulos where estado='publicado' order by fecha asc";
+            $sql = "SELECT id, titular, fecha, autor, foto, categoria from articulos where estado='publicado' order by fecha desc";
             $result = $this->cnn->query($sql);
 
             if ($result){
@@ -1215,6 +1215,54 @@ class BBDD
             if ($result)$rt = true;
 
         }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //FUNCIONES CATEGORIA
+
+    //Crear Categoria
+    function crearCategoria($nombre, $descripcion){
+        $rt = false;
+        try{
+            $nombre= addslashes(trim(strip_tags($nombre)));
+            $descripcion= addslashes(trim(strip_tags($descripcion)));
+
+            $sql = "Insert into categoria values ('$nombre', '$descripcion')";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+                $rt = true;
+            }
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Categorias
+    function consultarCategorias(){
+        $rt = false;
+        try{
+
+            $sql = "select * from categoria";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+                $categorias=[];
+                $cont = 0;
+
+                while (($row=$result->fetch_assoc())){
+                    $categorias[$cont]['nombre'] = $row['nombre'];
+                    $categorias[$cont]['descripcion'] = $row['descripcion'];
+
+                    $cont++;
+                }
+
+                $rt = $categorias;
+            }
+        }catch(Exception $e){
             $rt = false;
         }
         return $rt;

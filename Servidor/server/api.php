@@ -136,6 +136,7 @@ if(isset($_REQUEST['jwt'])){
                     }else{
                         throw new Exception();
                     }
+                case 'consultarCategorias':
                 case 'consultarArticulos':
                     new App($func, null);
                     break;
@@ -185,6 +186,15 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+                case 'crearCategoria':
+                    if(isset($decoded->id,$decoded->nombre, $decoded->descripcion)){
+                        $data['id'] = $decoded->id;
+                        $data['nombre'] = $decoded->nombre;
+                        $data['descripcion'] = $decoded->descripcion;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
             }
         }
 

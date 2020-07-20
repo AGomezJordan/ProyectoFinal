@@ -207,7 +207,7 @@
             <router-link
                 v-for="usuario in usuarios"
                 :to="{name: 'Usuario', params: {id:usuario.id}}"
-                v-if="usuarios"
+                v-if="usuarios && !cargando"
             >
                 <v-row class="text-center usuario mb-4">
                     <v-col cols="6" md="3" class="text-left">
@@ -226,6 +226,10 @@
                 </v-row>
             </router-link>
 
+            <!-- LOADER -->
+            <div v-if="cargando" class="loader">
+                <Loader color="#4ebfb4" height="50px" width="8px"></Loader>
+            </div>
 
         </div>
     </div>
@@ -235,6 +239,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
+    import Loader from 'vue-spinner/src/ScaleLoader'
     import {mapState, mapMutations} from 'vuex'
 
     export default {
@@ -253,6 +258,9 @@
                 usuarios: {},
                 mensaje: ''
             }
+        },
+        components:{
+          Loader
         },
         computed:{
             ...mapState(['HOST', 'mensajeError', 'error'])
@@ -442,5 +450,9 @@
     }
     .alerta{
         border-radius: 30px 30px 30px 30px;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

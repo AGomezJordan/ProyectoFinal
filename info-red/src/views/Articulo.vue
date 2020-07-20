@@ -7,7 +7,7 @@
             <twitter></twitter>
         </div>
         <div class="content align-content-center" :class="{'escritorio':!movil}">
-            <div class="cajonTarjeta">
+            <div class="cajonTarjeta" v-if="!cargando">
                 <v-card
                     class="tarjeta pa-3"
                     dark
@@ -27,6 +27,12 @@
                     </v-card-text>
                 </v-card>
             </div>
+
+            <!-- LOADER -->
+            <div v-if="cargando" class="loader">
+                <ScaleLoader color="#4ebfb4" height="50px" width="8px"></ScaleLoader>
+            </div>
+
         </div>
     </div>
 </template>
@@ -36,6 +42,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
+    import ScaleLoader from 'vue-spinner/src/ScaleLoader'
     import {mapState, mapMutations} from 'vuex'
     export default {
         name: "Articulo",
@@ -47,7 +54,7 @@
             }
         },
         components: {
-            Twitter,
+            Twitter, ScaleLoader
         },
         computed:{
             ...mapState(['HOST'])
@@ -178,5 +185,9 @@
         letter-spacing: 2px;
         line-height: 25px;
         font-size: 1.08em;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

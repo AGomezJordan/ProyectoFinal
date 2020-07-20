@@ -230,6 +230,7 @@
 
             <!-- LISTA DE CADA ARTÍCULO -->
             <router-link
+                    v-if="!cargando"
                     v-for="articulo in articulos"
                     :to="{
                             name: 'ValidarArticulos',
@@ -254,6 +255,11 @@
                     </v-col>
                 </v-row>
             </router-link>
+
+            <!-- LOADER -->
+            <div v-if="cargando" class="loader">
+                <Loader color="#4ebfb4" height="50px" width="8px"></Loader>
+            </div>
         </div>
     </div>
 </template>
@@ -262,6 +268,7 @@
     import {mapState, mapMutations} from 'vuex'
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
+    import Loader from 'vue-spinner/src/ScaleLoader'
     import axios from 'axios'
 
     export default {
@@ -271,7 +278,7 @@
                 cargando:false,
                 control: true,
                 collapseOnScroll: false,
-                categorias: ['Politica'],
+                categorias: [],
                 categoria: '',
                 autores: [],
                 autor: '',
@@ -281,6 +288,9 @@
                 hoy: '',
                 articulos:{}
             }
+        },
+        components:{
+            Loader
         },
         created() {
             this.obtenerUsuarios();
@@ -296,6 +306,7 @@
             }
             this.hoy = year+'-'+mes+'-'+day
             this.obtenerArticulos();
+            this.obtenerCategorias();
             setTimeout(()=> this.control = false, 3000)
         },
         destroyed(){
@@ -306,6 +317,64 @@
         },
         methods:{
             ...mapMutations(['setMensajeError']),
+            async obtenerCategorias() {
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    func: 'consultarCategorias',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST + 'server/api.php', formd)
+                let datos = response.data
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si hay categorias
+                                let cont=0
+                                let temp=[]
+                                for(const prop in decoded.data){
+                                    temp[prop] = decoded.data[prop].nombre
+                                    cont++;
+                                }
+                                this.categorias = temp
+                                this.cargando = false
+
+                            }else{ //Si no esta creado
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.cargando = false
+                    }
+
+                }else{
+                    this.cargando = false
+                }
+            },
             async obtenerArticulos(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
@@ -540,5 +609,9 @@
     }
     .alerta{
         border-radius: 30px 30px 30px 30px;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

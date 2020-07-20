@@ -94,7 +94,7 @@
         </v-dialog>
 
         <!-- ARTÍCULO -->
-        <div class="content align-content-center">
+        <div v-if="!cargando" class="content align-content-center">
                 <v-row>
                     <v-col cols="0" md="1"></v-col>
                     <v-col cols="12" md="10">
@@ -137,6 +137,11 @@
                     <v-col cols="0" md="1"></v-col>
                 </v-row>
         </div>
+
+        <!-- LOADER -->
+        <div v-if="cargando" class="loader">
+            <Loader color="#4ebfb4" height="50px" width="8px"></Loader>
+        </div>
     </div>
 </template>
 
@@ -146,6 +151,7 @@
     import decode from 'jwt-decode'
     import axios from 'axios'
     import router from '@/router'
+    import Loader from 'vue-spinner/src/ScaleLoader'
     export default {
         name: "ValidarArticulos",
         data(){
@@ -160,6 +166,9 @@
         },
         computed: {
             ...mapState(['user', 'HOST'])
+        },
+        components:{
+            Loader
         },
         created() {
             this.setBack(true)
@@ -502,5 +511,9 @@
     }
     .alerta{
         border-radius: 30px 30px 30px 30px;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

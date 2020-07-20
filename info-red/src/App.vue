@@ -9,7 +9,7 @@
             height="70"
     >
       <v-app-bar-nav-icon @click="drawer=!drawer"></v-app-bar-nav-icon>
-      <img  width="60" src="@/assets/logo.png" />
+      <RouterLink :to="{name:'Home'}"><img  width="60" src="@/assets/logo.png" /></RouterLink>
       <v-icon v-if="back" class="white--text ml-4" @click="atras()">mdi-reply</v-icon>
       <div class="frase">
       <div class="texto d-none d-sm-none d-md-block">
@@ -50,8 +50,14 @@
                       <v-btn @click="abrirLogin()" color="success" class="btn">ADMINISTRACIÓN</v-btn>
                   </div>
                   <div class="categorias">
-                  <v-list-item v-for="n in 20" :key="n">
-                      <v-list-item-title class="text-center title ma-4">CATEGORIA {{n}}</v-list-item-title>
+                  <v-list-item v-for="categoria in categorias">
+                      <v-list-item-title
+                        class="text-center title ma-4"
+                        style="text-transform: uppercase;"
+                        @click="$router.push({name: 'HomeFiltrado', params:{categoria:categoria.nombre}})"
+                      >
+                          {{categoria.nombre}}
+                      </v-list-item-title>
                   </v-list-item>
                   </div>
 
@@ -180,6 +186,9 @@
 </template>
 
 <script>
+import KJUR from 'jsrsasign'
+import decode from 'jwt-decode'
+import axios from 'axios'
 import {mapState, mapMutations, mapActions} from 'vuex'
 import { validationMixin } from 'vuelidate'
 import { required, maxLength, minLength} from 'vuelidate/lib/validators'
@@ -191,6 +200,7 @@ export default {
     components: {MenuUsuario},
     data(){
         return{
+            categorias: {},
             drawer:false,
             dialoga: false,
             buscar:'',
@@ -213,18 +223,68 @@ export default {
     },
     created(){
         this.setBack(false)
+        this.obtenerCategorias()
     },
     mounted(){
         this.setBack(false)
-        console.log("hola")
     },
     updated(){
 
     },
     computed:{
-          ...mapState(['back', 'admin', 'user', 'dialogLogin', 'mensajeError'])
+          ...mapState(['back', 'admin', 'user', 'dialogLogin', 'mensajeError', 'HOST'])
     },
     methods:{
+        async obtenerCategorias() {
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                func: 'consultarCategorias',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+
+            let response = await axios.post(this.HOST + 'server/api.php', formd)
+            let datos = response.data
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si hay categorias
+                            this.categorias = decoded.data
+                        }else{ //Si no esta creado
+                            this.cargando = false
+                        }
+
+                    } else { //Datos erroneos
+
+                        this.cargando = false
+                    }
+
+                } else { //Si no es valido
+                    this.cargando = false
+                }
+
+            }else{
+                this.cargando = false
+            }
+        },
         ...mapMutations(['setBack', 'setAdmin', 'setDialogLogin']),
         ...mapActions(['iniciarSesion', 'cerrarSesion']),
         atras(){

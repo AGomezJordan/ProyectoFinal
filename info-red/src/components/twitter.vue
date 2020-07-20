@@ -5,7 +5,7 @@
         <div class="nosotros mb-6">ÚLTIMOS TWEETS</div>
 
         <!-- TWEETS -->
-        <div class="tweets mb-8">
+        <div v-if="!cargando" class="tweets mb-8">
                 <div class="tweet pa-2 mb-5" v-for="tweet in tweets">
                     <!-- URL -->
                     <a
@@ -18,8 +18,8 @@
                             <img width="40" class="mb-1 mr-6 logo" src="../assets/logo.png"> @infoo_red
                         </div>
                         <!-- TWEET -->
-                        <div class="texto text-justify pa-2">
-                            {{tweet.tweet}}
+                        <div class="texto text-left pa-2">
+                            {{tweet.text}}
                         </div>
                         <!-- FECHA -->
                         <div class="fecha">
@@ -28,6 +28,11 @@
                         </div>
                     </a>
                 </div>
+        </div>
+
+        <!-- LOADER -->
+        <div v-if="cargando" class="loader mb-5">
+            <Loader color="#4ebfb4"></Loader>
         </div>
 
         <!-- FOOTER -->
@@ -83,19 +88,24 @@
 <script>
     import KJUR from 'jsrsasign'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import Loader from 'vue-spinner/src/SyncLoader'
+    import {mapState, mapMutations} from 'vuex'
     export default {
         name: "twitter",
         data(){
           return{
-              tweets: []
+              cargando: false
           }
         },
+        components:{
+          Loader
+        },
         computed:{
-          ...mapState(['HOST'])
+          ...mapState(['HOST', 'tweets'])
         },
         methods:{
             async obtenerTweets(){
+                this.cargando = true
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
                 let secret = "Alvaro1234@asdfgh"; // Clave privada
 
@@ -109,11 +119,17 @@
 
                 let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data
-                this.tweets = datos.data
+                if(datos){
+                    this.setTweets(datos)
+                }
+                this.cargando = false
             },
+            ...mapMutations(['setTweets'])
         },
         created() {
-            this.obtenerTweets()
+            if (this.tweets === null) {
+                this.obtenerTweets()
+            }
         }
 
     }
@@ -206,5 +222,9 @@
     }
     a{
         text-decoration: none;
+    }
+    .loader{
+        text-align: center;
+        width: 100%;
     }
 </style>

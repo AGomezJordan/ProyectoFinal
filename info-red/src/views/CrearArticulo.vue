@@ -51,6 +51,7 @@
                                 label="Titular"
                                 color="success"
                                 dark
+                                :loading="cargando"
                         ></v-text-field>
                     </v-col>
                     <!-- SUBTITULAR -->
@@ -62,6 +63,7 @@
                                 label="SubTitular"
                                 color="success"
                                 dark
+                                :loading="cargando"
                         ></v-text-field>
                     </v-col>
                     <!-- ARTICULO -->
@@ -74,6 +76,7 @@
                                 rows="1"
                                 color="success"
                                 dark
+                                :loading="cargando"
                                 v-model="$v.articulo.$model"
                         ></v-textarea>
                     </v-col>
@@ -89,6 +92,7 @@
                                 @change="validateFoto()"
                                 accept="image/jpeg"
                                 v-model="portada"
+                                :loading="cargando"
                         ></v-file-input>
                     </v-col>
                     <!-- CATEGORIA -->
@@ -98,6 +102,7 @@
                                 label="Categoría"
                                 dark
                                 color="success"
+                                :loading="cargando"
                                 v-model="$v.categoria.$model"
                         ></v-select>
                     </v-col>
@@ -124,6 +129,7 @@
                 </form>
             </v-col>
             <v-col cols="0" md="2"></v-col>
+            {{categorias}}
         </v-row>
     </div>
 </template>
@@ -139,6 +145,7 @@
         name: "CrearArticulo",
         data(){
             return{
+                cargando:false,
                 control: true,
                 mensaje: '',
                 valido: false,
@@ -146,7 +153,7 @@
                 subtitular: '',
                 articulo:'',
                 portada:null,
-                categorias: ['Politica'],
+                categorias: [],
                 categoria: '',
                 nameRules: [
                     v => !!v || 'Titular Requerido',
@@ -179,7 +186,69 @@
         computed:{
           ...mapState(['HOST'])
         },
+        created(){
+          this.obtenerCategorias()
+        },
         methods: {
+            async obtenerCategorias() {
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    func: 'consultarCategorias',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+                formd.append("portada", this.portada)
+
+                let response = await axios.post(this.HOST + 'server/api.php', formd)
+                let datos = response.data
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si hay categorias
+                                let cont=0
+                                let temp=[]
+                                for(const prop in decoded.data){
+                                    temp[prop] = decoded.data[prop].nombre
+                                    cont++;
+                                }
+                                this.categorias = temp
+                                this.cargando = false
+
+                            }else{ //Si no esta creado
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.cargando = false
+                    }
+
+                }else{
+                    this.cargando = false
+                }
+            },
             borrarRules(){
               this.nameRules = null
               this.subRules = null

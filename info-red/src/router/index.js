@@ -9,6 +9,11 @@ Vue.use(VueRouter)
     name: 'Home',
     component: () => import('../views/Home.vue')
   },
+  { //VENTANA PRINCIPAL POR CATEGORIA
+    path: '/categoria/:categoria',
+    name: 'HomeFiltrado',
+    component: () => import('../views/HomeFiltrado.vue')
+  },
   { //MOSTRAR UN ARTICULO
     path: '/Articulo/:id',
     name: 'Articulo',

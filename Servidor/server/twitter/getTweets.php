@@ -17,13 +17,16 @@ $json =  $twitter->setGetfield($getfield)
     ->performRequest();
 
 $datos = json_decode($json);
-$cad = '{"data":[';
+
+$response = [];
+$cont = 0;
 foreach ($datos as $tweet){
-    $cad.='{"fecha":"'.$tweet->created_at.'",';
-    $cad.='"id":"'.$tweet->id_str.'",';
-    $cad.='"tweet":"'.$tweet->text.'"},';
+    $response[$cont]['fecha']=$tweet->created_at;
+    $response[$cont]['id']=$tweet->id_str;
+    $response[$cont]['text']=$tweet->text;
+    $cont ++;
 }
-$cad = substr($cad, 0, -1);
-$cad.=']}';
-echo $cad;
+
+$json = json_encode($response);
+echo $json;
 //print_r($datos);

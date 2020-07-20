@@ -20,6 +20,7 @@
                         label="Nombre"
                         color="success"
                         dark
+                        :loading="cargando"
                 ></v-text-field>
                 <v-textarea
                         auto-grow
@@ -30,6 +31,7 @@
                         color="success"
                         dark
                         v-model="$v.descripcion.$model"
+                        :loading="cargando"
                 ></v-textarea>
                 <v-btn
                     color="success"
@@ -51,6 +53,7 @@
         name: "CrearNota",
         data(){
             return{
+                cargando: false,
                 nombre: '',
                 descripcion: '',
                 nameRules: [
