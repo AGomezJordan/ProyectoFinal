@@ -85,9 +85,9 @@ export default {
         }
         this.obtenerArticulos()
     },
-    beforeRouteUpdate(){
-        console.log("obteniendo articulos "+this.$route.params.categoria)
-      this.obtenerArticulos()
+    beforeRouteUpdate(to, from, next){
+        console.log(to)
+        // this.obtenerArticulos(to.params.categoria)
     },
     methods: {
         ...mapActions(['tweet']),
@@ -100,12 +100,12 @@ export default {
             //crear JWT
             let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
             let data = {
-                id: '',
-                func: 'filtrarArticulos',
-                autor: '',
-                fecha: '',
-                categoria: this.$route.params.categoria,
-                estado: ''
+                    id: '',
+                    func: 'filtrarArticulos',
+                    autor: '',
+                    fecha: '',
+                    categoria: this.$route.params.categoria,
+                    estado: ''
             };
 
             let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT

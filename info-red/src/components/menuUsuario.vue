@@ -22,7 +22,7 @@
             <v-list-item-title class="text-center title ma-4">CREAR CATEGORÍA</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$router.push({name: 'CrearNota'})">
-            <v-list-item-title class="text-center title ma-4">CREAR NORA</v-list-item-title>
+            <v-list-item-title class="text-center title ma-4">CREAR NOTA</v-list-item-title>
         </v-list-item>
         <v-list-item @click="$router.push({name: 'ConsultarNotas'})">
             <v-list-item-title class="text-center title ma-4">CONSULTAR NOTAS</v-list-item-title>

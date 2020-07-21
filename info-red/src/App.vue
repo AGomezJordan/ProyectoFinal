@@ -51,13 +51,18 @@
                   </div>
                   <div class="categorias">
                   <v-list-item v-for="categoria in categorias">
+                      <a
+                        :href="'/categoria/'+categoria.nombre"
+                        class="white--text"
+                      >
                       <v-list-item-title
                         class="text-center title ma-4"
-                        style="text-transform: uppercase;"
-                        @click="$router.push({name: 'HomeFiltrado', params:{categoria:categoria.nombre}})"
-                      >
+                        style="text-transform: uppercase;">
+<!--                        @click="$router.push({path:'/categoria/'+categoria.nombre})"-->
+
                           {{categoria.nombre}}
                       </v-list-item-title>
+                      </a>
                   </v-list-item>
                   </div>
 

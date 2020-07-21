@@ -152,6 +152,7 @@
                         if (decoded.status) { //Datos como los esperabamos
 
                             if (decoded.creado){ //Si esta creado
+                                window.scroll(0,0)
                                 this.error=false
                                 this.mensaje = 'CATEGORIA CREADA CORRECTAMENTE'
                                 this.cargando = false

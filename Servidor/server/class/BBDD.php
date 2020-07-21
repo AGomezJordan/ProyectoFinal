@@ -1220,6 +1220,8 @@ class BBDD
         return $rt;
     }
 
+
+
     //FUNCIONES CATEGORIA
 
     //Crear Categoria
@@ -1267,5 +1269,100 @@ class BBDD
         }
         return $rt;
     }
+
+
+    //FUNCIONES NOTAS
+
+    //Crear nota
+    function crearNota($id, $nombre, $descripcion){
+        $rt = false;
+        try{
+            $id= addslashes(trim(strip_tags($id)));
+            $nombre= addslashes(trim(strip_tags($nombre)));
+            $descripcion= addslashes(trim(strip_tags($descripcion)));
+
+            $autor = $this->consultarUsuario($id)['usuario'];
+
+            $sql = "select max(id) as id from notas";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+                $id = $result->fetch_assoc()['id'];
+                if($id){
+                    $id++;
+                }else{
+                    $id = 1;
+                }
+                $sql = "Insert into notas values ($id, '$nombre', '$descripcion', now(), '$autor')";
+                $result = $this->cnn->query($sql);
+
+                if ($result){
+                    $rt = true;
+                }
+            }
+
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Notas
+    function consultarNotas($id){
+        $rt = false;
+        try{
+            $id= addslashes(trim(strip_tags($id)));
+            $autor = $this->consultarUsuario($id)['usuario'];
+
+            $sql = "select * from notas where usuario= '$autor'";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+                $notas=[];
+                $cont = 0;
+
+                while (($row=$result->fetch_assoc())){
+                    $notas[$cont]['id']= $row['id'];
+                    $notas[$cont]['titulo'] = $row['titulo'];
+                    $notas[$cont]['nota'] = substr($row['nota'], 0, 40);
+                    $notas[$cont]['fecha']= $row['fecha'];
+                    $cont++;
+                }
+
+                $rt = $notas;
+            }
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Nota
+    function consultarNota($id, $notaID){
+        $rt = false;
+        try{
+            $id= addslashes(trim(strip_tags($id)));
+            $autor = $this->consultarUsuario($id)['usuario'];
+
+            $sql = "select * from notas where usuario= '$autor' and id=$notaID";
+            $result = $this->cnn->query($sql);
+
+            if ($result){
+                $row = $result->fetch_assoc();
+
+                $notas['id']= $row['id'];
+                $notas['titulo'] = $row['titulo'];
+                $notas['nota'] = $row['nota'];
+                $notas['fecha']= $row['fecha'];
+
+                $rt = $notas;
+            }
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+
 
 }

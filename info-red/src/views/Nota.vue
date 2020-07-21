@@ -1,17 +1,14 @@
 <template>
     <div class="white--text c">
-        <div class="content align-content-center" :class="{'escritorio':!movil}">
+        <div class="content align-content-center">
             <div class="cajonTarjeta">
                 <v-card
                     class="tarjeta pa-3"
                     dark
                 >
-                    <v-card-title class="headline">TITULO</v-card-title>
+                    <v-card-title class="headline">{{nota.titulo}}</v-card-title>
                     <v-card-text class="text-justify informacion">
-                        KAJsdklaj sdaklsd jaklsdj alksdj askldj aslkñdj asd asd
-                         asd
-                        as dasd
-                        asd asdlña sjdlaksd ñask askd askd la
+                        {{nota.nota}}
                     </v-card-text>
                 </v-card>
             </div>
@@ -20,18 +17,89 @@
 </template>
 
 <script>
+    import KJUR from 'jsrsasign'
+    import Loader from 'vue-spinner/src/ScaleLoader'
+    import decode from 'jwt-decode'
+    import axios from 'axios'
     import {mapState, mapMutations} from 'vuex'
     export default {
         name: "Nota",
-        components: {
-            ...mapState(['back'])
+        data(){
+          return{
+              nota: {}
+          }
         },
-        created() {
-            this.setBack(true)
+        computed: {
+            ...mapState(['back', 'HOST'])
         },
         mounted(){
             this.setBack(true)
             window.scroll(0,0)
+        },
+        async created(){
+            this.setBack(true)
+            this.cargando = true;
+            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+            let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+            //crear JWT
+            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+            let data = {
+                id: localStorage.getItem('usuarioID'),
+                notaID: this.$route.params.id,
+                func: 'consultarNota',
+            };
+
+            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+            let formd = new FormData();
+            formd.append("jwt", jwt)
+
+            let response = await axios.post(this.HOST+'server/api.php', formd)
+            let datos = response.data
+
+            if (datos.status) {
+                //verify JWT
+                let token = datos.token;
+                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                if (isValid) { //Valido, decodificamos el jwt
+                    let decoded = decode(token)
+
+                    //Comprobar status
+                    if (decoded.status) { //Datos como los esperabamos
+
+                        if (decoded.data){ //Si hay datos
+                            this.nota = decoded.data
+                            this.cargando = false
+                        }else{ //Si no hay datos
+                            this.cargando = false
+                            this.mensaje= 'No hay datos que mostrar'
+                            setTimeout(()=> this.control = false, 4000)
+                        }
+
+                    } else { //Datos erroneos
+                        this.mensaje = 'Upss... prueba otra vez'
+                        this.cargando = false
+                        setTimeout(()=> this.control = false, 4000)
+                    }
+
+                } else { //Si no es valido
+                    this.mensaje = 'Upss... prueba otra vez'
+                    this.cargando = false
+                    setTimeout(()=> this.control = false, 4000)
+                }
+
+            }else{
+                if (datos.mensaje !== null){
+                    this.mensaje = datos.mensaje;
+                    setTimeout(()=> this.control = false, 4000)
+                }else{
+                    this.mensaje = 'Server KO... intentelo de nuevo'
+                    setTimeout(()=> this.control = false, 4000)
+                }
+                this.cargando = false
+            }
         },
         destroyed(){
             this.setBack(false)

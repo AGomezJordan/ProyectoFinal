@@ -61,6 +61,7 @@ if(isset($_REQUEST['jwt'])){
                     break;
 
                 //CONSULTAR USUARIO
+                case 'consultarNotas':
                 case 'consultarLogs':
                 case 'consultarUsuarios':
                     if (isset($decoded->id)){
@@ -186,6 +187,7 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+                case 'crearNota':
                 case 'crearCategoria':
                     if(isset($decoded->id,$decoded->nombre, $decoded->descripcion)){
                         $data['id'] = $decoded->id;
@@ -195,6 +197,17 @@ if(isset($_REQUEST['jwt'])){
                     }else{
                         throw new Exception();
                     }
+                    break;
+                case 'consultarNota':
+                    if (isset($decoded->id, $decoded->notaID)){
+                        $data['id'] = $decoded->id;
+                        $data['notaID'] = $decoded->notaID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+
+                    break;
             }
         }
 

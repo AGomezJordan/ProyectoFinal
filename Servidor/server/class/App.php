@@ -81,6 +81,15 @@ class App
             case 'consultarCategorias':
                 $this->consultarCategorias();
                 break;
+            case 'crearNota':
+                $this->crearNota();
+                break;
+            case 'consultarNotas':
+                $this->consultarNotas();
+                break;
+            case 'consultarNota':
+                $this->consultarNota();
+                break;
         }
     }
 
@@ -642,6 +651,8 @@ class App
     }
 
 
+
+
     //FUNCIONES CATEGORIA
 
     //CREAR CATEGORIA
@@ -701,6 +712,105 @@ class App
             $jwt = JWT::encode($token, $this->key); //Generamos JWT
             $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
             echo $json;
+        }
+    }
+
+
+
+
+    //FUNCIONES NOTAS
+
+    //CREAR NOTA
+    private function crearNota(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
+
+            if (isset($this->data['nombre'], $this->data['descripcion'])) {
+
+                $result = $this->cnn->crearNota($this->data['id'], $this->data['nombre'], $this->data['descripcion']);
+
+                if ($result) {
+                    $token = array(
+                        'status' => true,
+                        'creado' => true,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                } else {
+                    $token = array(
+                        'status' => true,
+                        'creado' => false,
+
+                    );
+                    $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                    $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                    echo $json;
+                }
+            }else{
+                echo '{"status":false, "mensaje": "Algo ha ido mal, reintentelo mas tarde"}';
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //CONSULTAR NOTAS
+    private function consultarNotas(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
+            $result = $this->cnn->consultarNotas($this->data['id']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //CONSULTAR NOTA
+    private function consultarNota(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
+            $result = $this->cnn->consultarNota($this->data['id'], $this->data['notaID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
         }
     }
 

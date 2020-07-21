@@ -129,7 +129,6 @@
                 </form>
             </v-col>
             <v-col cols="0" md="2"></v-col>
-            {{categorias}}
         </v-row>
     </div>
 </template>
@@ -306,14 +305,15 @@
                         if (decoded.status) { //Datos como los esperabamos
 
                             if (decoded.creado){ //Si esta creado
+                                window.scroll(0,0)
                                 this.error=false
                                 this.mensaje = 'ARTICULO CREADO CORRECTAMENTE'
                                 this.cargando = false
                                 this.borrarRules()
                                 this.borrarformulario()
-                                setTimeout(()=> this.control = false, 3000)
-                                setTimeout(()=> this.mensaje = '', 3000)
-                                setTimeout(()=> router.push({name:'ConsultarArticulos'}), 3000)
+                                setTimeout(()=> this.control = false, 2000)
+                                setTimeout(()=> this.mensaje = '', 2000)
+                                setTimeout(()=> router.push({name:'ConsultarArticulos'}), 2000)
                             }else{ //Si no esta creado
                                 this.error=true
                                 this.mensaje = 'EL ARTICULO NO HA PODIDO CREARSE'
