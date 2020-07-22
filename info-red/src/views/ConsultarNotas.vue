@@ -9,13 +9,48 @@
             <v-col cols="0" md="4"></v-col>
         </v-row>
 
+        <!-- ALERTA -->
+        <v-row v-if="control && (this.mensaje || !notas)" class="mensaje">
+            <v-col cols="0" md="3"></v-col>
+            <v-col cols="12" md="6">
+                <!-- OK -->
+                <v-alert
+                        class="alerta"
+                        type="success"
+                        v-if="this.mensaje && !error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+
+                <!-- NOK -->
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="this.mensaje && error"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+                <v-alert
+                        class="alerta"
+                        type="error"
+                        v-if="!notas"
+                        dismissible
+                >
+                    {{mensaje}}
+                </v-alert>
+            </v-col>
+            <v-col cols="0" md="3"></v-col>
+        </v-row>
+
         <!-- NOTAS -->
         <v-row v-if="!cargando" class="pa-5">
             <v-col lg="4" md="6" cols="12" v-for="nota in notas">
                 <div class="botones">
                     <v-btn
                             elevation="10"
-                            @click=""
+                            @click="$router.push({name: 'EditarNota', params:{id: nota.id}})"
                             fab
                             color="success"
                     >
@@ -23,7 +58,7 @@
                     </v-btn>
                     <v-btn
                             elevation="10"
-                            @click=""
+                            @click="borrar(nota.id)"
                             fab
                             color="error"
                     >
@@ -63,9 +98,11 @@
         name: "ConsultarNotas",
         data(){
             return{
+                control: false,
                 notas: {},
                 cargando: '',
-                mensaje: ''
+                mensaje: '',
+                error: false,
             }
         },
         created(){
@@ -152,6 +189,89 @@
                     this.cargando = false
                 }
             },
+            async borrar(payload){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
+
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    notaID: payload,
+                    func: 'eliminarNota',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
+
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.eliminado){ //Si esta desactivado
+                                this.mensaje = "NOTA BORRADA CORRECTAMENTE"
+                                this.error = false
+                                this.control = true
+
+                                let temp = this.notas
+                                for(let x in temp){
+                                    if(temp[x].id === payload){
+                                        temp.splice(x,1)
+                                    }
+                                }
+                                this.notas = temp
+                                this.cargando = false
+                                setTimeout(()=> this.control = false, 3000)
+                            }else{ //Si no esta desactivado
+                                this.mensaje="LA NOTA NO HA PODIDO BORRARSE"
+                                this.error = true
+                                this.cargando = false
+                                this.control = true
+                                setTimeout(()=> this.control = false, 3000)
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje="Upss... prueba otra vez"
+                            this.error = true
+                            this.cargando = false
+                            this.control = true
+                            setTimeout(()=> this.control = false, 3000)
+                        }
+
+                    } else { //Si no es valido
+                        this.mensaje="Upss... prueba otra vez"
+                        this.error = true
+                        this.cargando = false
+                        this.control = true
+                        setTimeout(()=> this.control = false, 3000)
+                    }
+
+                }else{
+                    this.error = true
+                    if (datos.mensaje !== null){
+                        this.mensaje = datos.mensaje;
+                    }else{
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    this.control = true
+                    setTimeout(()=> this.control = false, 3000)
+                    this.cargando = false
+                }
+            }
         }
     }
 </script>

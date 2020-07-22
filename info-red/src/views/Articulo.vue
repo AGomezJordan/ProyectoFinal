@@ -18,7 +18,7 @@
                         </div>
                     </v-card-text>
                     <v-card-title class="headline">{{articulo.titular}}</v-card-title>
-                    <v-card-subtitle class="title">{{articulo.subtiular}}</v-card-subtitle>
+                    <v-card-subtitle class="title">{{articulo.subtitular}}</v-card-subtitle>
                     <v-card-text class="text-justify informacion" v-html="articulo.articulo">
                     </v-card-text>
                     <v-card-text>

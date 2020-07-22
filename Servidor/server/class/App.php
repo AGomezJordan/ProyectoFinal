@@ -90,6 +90,15 @@ class App
             case 'consultarNota':
                 $this->consultarNota();
                 break;
+            case 'consultarNotaEditar':
+                $this->consultarNotaEditar();
+                break;
+            case 'eliminarNota':
+                $this->eliminarNota();
+                break;
+            case 'editarNota':
+                $this->editarNota();
+                break;
         }
     }
 
@@ -803,6 +812,92 @@ class App
                 $token = array(
                     'status' => true,
                     'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //CONSULTAR NOTA EDITAR
+    private function consultarNotaEditar(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido) {
+            $result = $this->cnn->consultarNotaEditar($this->data['id'], $this->data['notaID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //ELIMINAR NOTA
+    private function eliminarNota(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->eliminarNota($this->data['id'], $this->data['notaID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => false,
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //EDITAR NOTA
+    private function editarNota(){
+        $valido = $this->cnn->comprobarValido($this->data['id']);
+        if ($valido){
+            $result = $this->cnn->editarNota($this->data['id'], $this->data['titulo'], $this->data['nota'], $this->data['notaID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'editada' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'editada' => false,
 
                 );
                 $jwt = JWT::encode($token, $this->key); //Generamos JWT

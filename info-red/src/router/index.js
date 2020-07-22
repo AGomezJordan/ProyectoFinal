@@ -102,6 +102,12 @@ Vue.use(VueRouter)
     name: 'Notas',
     component: () => import('../views/Nota.vue'),
     meta: {requiresAuth: true}
+  },
+  { //VENTANA PARA EDITAR NOTAS
+    path: '/Administracion/EditarNota/:id',
+    name: 'EditarNota',
+    component: () => import('../views/EditarNota.vue'),
+    meta: {requiresAuth: true}
   }
 ]
 

@@ -85,7 +85,7 @@
                        @click="borrar()"
                         v-if="usuario.valido === 'activado'"
                     >
-                        Borrar
+                        Desactivar
                     </v-btn>
                     <v-btn
                             color="warning"

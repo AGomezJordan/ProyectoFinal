@@ -86,8 +86,7 @@ export default {
         this.obtenerArticulos()
     },
     beforeRouteUpdate(to, from, next){
-        console.log(to)
-        // this.obtenerArticulos(to.params.categoria)
+        next()
     },
     methods: {
         ...mapActions(['tweet']),

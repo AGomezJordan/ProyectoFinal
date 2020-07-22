@@ -231,7 +231,7 @@ class BBDD
 
                 $sql = "update usuarios set tipo='$tipo', clave='$clave', telefono=telefono where id='$id' and valido=1";
                 $result = $this->cnn->query($sql);
-                if ($result)$rt = true;
+                if ($this->cnn->affected_rows===1)$rt = true;
 
         }catch (Exception $e){
             $rt = false;
@@ -668,7 +668,6 @@ class BBDD
                     //Insertar datos
                     @rename($portada['tmp_name'], "img/$id{$portada['name']}");
                     $url = $id.$portada['name'];
-                    //$url = "prueba";
 
 
                     $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
@@ -683,7 +682,6 @@ class BBDD
                     //Insertar datos
                     @rename($portada['tmp_name'], "img/$id{$portada['name']}");
                     $url = $id.$portada['name'];
-                    //$url = "prueba";
 
 
                     $sql = "insert into articulos value ('{$id}' ,'{$titular}' ,'{$subtitular}' ,'{$articulo}' ,'{$autor}' , now() ,";
@@ -1212,7 +1210,7 @@ class BBDD
             $sql.="where id='$id' and autor = '$autor'";
 
             $result = $this->cnn->query($sql);
-            if ($result)$rt = true;
+            if ($this->cnn->affected_rows===1)$rt = true;
 
         }catch (Exception $e){
             $rt = false;
@@ -1355,6 +1353,8 @@ class BBDD
                 $notas['nota'] = $row['nota'];
                 $notas['fecha']= $row['fecha'];
 
+                $notas['nota']= str_replace("\n", " <br> ", $notas['nota']);
+
                 $rt = $notas;
             }
         }catch(Exception $e){
@@ -1363,6 +1363,58 @@ class BBDD
         return $rt;
     }
 
+    //Consultar Nota para editarlo
+    function consultarNotaEditar($id, $notaID){
+        $rt = false;
+        $result= $this->consultarNota($id, $notaID);
+        if($result){
+            $result['nota'] = str_replace("<br>", " \n", $result['nota']);
+            $rt = $result;
+        }
+        return $rt;
+    }
 
+    //Eliminar Nota
+    function eliminarNota($id, $notaID){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            $notaID = addslashes(trim(strip_tags($notaID)));
+            $autor = $this->consultarUsuario($id)['usuario'];
+
+            $sql = "DELETE FROM notas WHERE id = '$notaID' and usuario='$autor'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Editar Nota
+    function editarNota($id, $titulo, $nota, $notaID){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+            //Eliminar caracteres que generen conflicto y encriptar clave
+            $titulo = addslashes(trim(strip_tags($titulo)));
+            $nota = addslashes(trim(strip_tags($nota)));
+            $notaID = addslashes(trim(strip_tags($notaID)));
+
+            $autor = $this->consultarUsuario($id)['usuario'];
+
+            $sql = "update notas set titulo='$titulo', nota='$nota' ";
+            $sql.="where id='$notaID' and usuario = '$autor'";
+
+            $result = $this->cnn->query($sql);
+            if ($this->cnn->affected_rows===1)$rt = true;
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
 
 }

@@ -7,8 +7,7 @@
                     dark
                 >
                     <v-card-title class="headline">{{nota.titulo}}</v-card-title>
-                    <v-card-text class="text-justify informacion">
-                        {{nota.nota}}
+                    <v-card-text class="text-justify informacion" v-html="nota.nota">
                     </v-card-text>
                 </v-card>
             </div>
@@ -18,6 +17,7 @@
 
 <script>
     import KJUR from 'jsrsasign'
+    import router from '@/router'
     import Loader from 'vue-spinner/src/ScaleLoader'
     import decode from 'jwt-decode'
     import axios from 'axios'
@@ -75,27 +75,32 @@
                         }else{ //Si no hay datos
                             this.cargando = false
                             this.mensaje= 'No hay datos que mostrar'
+                            this.control = true
                             setTimeout(()=> this.control = false, 4000)
                         }
 
                     } else { //Datos erroneos
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
+                        this.control = true
                         setTimeout(()=> this.control = false, 4000)
                     }
 
                 } else { //Si no es valido
                     this.mensaje = 'Upss... prueba otra vez'
                     this.cargando = false
+                    this.control = true
                     setTimeout(()=> this.control = false, 4000)
                 }
 
             }else{
                 if (datos.mensaje !== null){
                     this.mensaje = datos.mensaje;
+                    this.control = true
                     setTimeout(()=> this.control = false, 4000)
                 }else{
                     this.mensaje = 'Server KO... intentelo de nuevo'
+                    this.control = true
                     setTimeout(()=> this.control = false, 4000)
                 }
                 this.cargando = false
@@ -105,7 +110,7 @@
             this.setBack(false)
         },
         methods:{
-            ...mapMutations(['setBack'])
+            ...mapMutations(['setBack', 'setMensajeError', 'setError']),
         }
     }
 </script>

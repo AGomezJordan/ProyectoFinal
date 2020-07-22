@@ -18,14 +18,6 @@
       </div>
       </div>
       <v-spacer></v-spacer>
-      <v-btn v-if="this.user.tipo == null" icon @click="mostrar=!mostrar">
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-      <v-text-field
-              v-if="mostrar"
-              v-model="buscar"
-              hide-details
-      ></v-text-field>
     </v-app-bar>
 
       <!-- MENU LAERAL OCULTO NO LOGEADO -->
@@ -51,18 +43,15 @@
                   </div>
                   <div class="categorias">
                   <v-list-item v-for="categoria in categorias">
-                      <a
-                        :href="'/categoria/'+categoria.nombre"
-                        class="white--text"
-                      >
                       <v-list-item-title
                         class="text-center title ma-4"
-                        style="text-transform: uppercase;">
-<!--                        @click="$router.push({path:'/categoria/'+categoria.nombre})"-->
+                        style="text-transform: uppercase;"
+                        @click="$router.push({path:'/categoria/'+categoria.nombre})"
+                        >
 
                           {{categoria.nombre}}
                       </v-list-item-title>
-                      </a>
+
                   </v-list-item>
                   </div>
 
@@ -185,7 +174,7 @@
 
       <!-- APP -->
     <v-main :class="{'content':this.user.tipo == null, 'contentAdmin': this.user.tipo != null}">
-        <RouterView></RouterView>
+        <RouterView :key="$route.fullPath"></RouterView>
     </v-main>
   </v-app>
 </template>
