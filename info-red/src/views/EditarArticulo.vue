@@ -165,7 +165,7 @@
                 subtitular: '',
                 articulo:'',
                 portada:null,
-                categorias: ['Politica'],
+                categorias: [],
                 categoria: '',
                 nameRules: [
                     v => !!v || 'Titulo Requerido',
@@ -192,78 +192,141 @@
           ...mapState(['HOST'])
         },
         async created(){
-            this.cargando = true;
-            let jws = KJUR.jws.JWS; //Objeto para tratar JWT
-            let secret = "Alvaro1234@asdfgh"; // Clave privada
+            this.obtenerCategorias(),
+            this.obtenerArticulo()
+        },
+        methods:{
+            async obtenerArticulo(){
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
 
-            //crear JWT
-            let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
-            let data = {
-                id: localStorage.getItem('usuarioID'),
-                articuloID: this.$route.params.id,
-                func: 'consultarArticuloEditar',
-            };
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    articuloID: this.$route.params.id,
+                    func: 'consultarArticuloEditar',
+                };
 
-            let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
 
-            let formd = new FormData();
-            formd.append("jwt", jwt)
+                let formd = new FormData();
+                formd.append("jwt", jwt)
 
-            let response = await axios.post(this.HOST+'server/api.php', formd)
-            let datos = response.data
+                let response = await axios.post(this.HOST+'server/api.php', formd)
+                let datos = response.data
 
 
-            if (datos.status) {
-                //verify JWT
-                let token = datos.token;
-                let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
 
-                if (isValid) { //Valido, decodificamos el jwt
-                    let decoded = decode(token)
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
 
-                    //Comprobar status
-                    if (decoded.status) { //Datos como los esperabamos
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
 
-                        if (decoded.data){ //Si esta creado
-                            let temp = decoded.data
+                            if (decoded.data){ //Si esta creado
+                                let temp = decoded.data
 
-                            this.$v.titular.$model = temp.titular
-                            this.$v.subtitular.$model = temp.subtitular
-                            this.$v.articulo.$model = temp.articulo
-                            this.$v.categoria.$model = temp.categoria
+                                this.$v.titular.$model = temp.titular
+                                this.$v.subtitular.$model = temp.subtitular
+                                this.$v.articulo.$model = temp.articulo
+                                this.$v.categoria.$model = temp.categoria
 
+                                this.cargando = false
+                            }else{ //Si no esta creado
+                                this.cargando = false
+                                this.mensaje = "No se han podido recuperar los datos"
+                                this.error = true
+                                setTimeout(()=> this.control = false, 4000)
+                            }
+
+                        } else { //Datos erroneos
+                            this.mensaje = 'Upss... prueba otra vez'
                             this.cargando = false
-                        }else{ //Si no esta creado
-                            this.cargando = false
-                            this.mensaje = "No se han podido recuperar los datos"
-                            this.error = true
                             setTimeout(()=> this.control = false, 4000)
                         }
 
-                    } else { //Datos erroneos
+                    } else { //Si no es valido
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
                         setTimeout(()=> this.control = false, 4000)
                     }
 
-                } else { //Si no es valido
-                    this.mensaje = 'Upss... prueba otra vez'
+                }else {
+                    this.error = true
+                    if (datos.mensaje !== null) {
+                        this.mensaje = datos.mensaje;
+                    } else {
+                        this.mensaje = 'Server KO... intentelo de nuevo'
+                    }
+                    setTimeout(() => this.control = false, 4000)
                     this.cargando = false
-                    setTimeout(()=> this.control = false, 4000)
                 }
+            },
+            async obtenerCategorias() {
+                this.cargando = true;
+                let jws = KJUR.jws.JWS; //Objeto para tratar JWT
+                let secret = "Alvaro1234@asdfgh"; // Clave privada
 
-            }else{
-                this.error = true
-                if (datos.mensaje !== null){
-                    this.mensaje = datos.mensaje;
+                //crear JWT
+                let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
+                let data = {
+                    id: localStorage.getItem('usuarioID'),
+                    func: 'consultarCategorias',
+                };
+
+                let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
+
+                let formd = new FormData();
+                formd.append("jwt", jwt)
+                formd.append("portada", this.portada)
+
+                let response = await axios.post(this.HOST + 'server/api.php', formd)
+                let datos = response.data
+
+                if (datos.status) {
+                    //verify JWT
+                    let token = datos.token;
+                    let isValid = jws.verifyJWT(token, {utf8: secret}, {alg: ["HS256"]})
+
+                    if (isValid) { //Valido, decodificamos el jwt
+                        let decoded = decode(token)
+
+                        //Comprobar status
+                        if (decoded.status) { //Datos como los esperabamos
+
+                            if (decoded.data){ //Si hay categorias
+                                let cont=0
+                                let temp=[]
+                                for(const prop in decoded.data){
+                                    temp[prop] = decoded.data[prop].nombre
+                                    cont++;
+                                }
+                                this.categorias = temp
+                                this.cargando = false
+
+                            }else{ //Si no esta creado
+                                this.cargando = false
+                            }
+
+                        } else { //Datos erroneos
+
+                            this.cargando = false
+                        }
+
+                    } else { //Si no es valido
+                        this.cargando = false
+                    }
+
                 }else{
-                    this.mensaje = 'Server KO... intentelo de nuevo'
+                    this.cargando = false
                 }
-                setTimeout(()=> this.control = false, 4000)
-                this.cargando = false
-            }
-        },
-        methods:{
+            },
             borrarformulario(){
                 this.$v.titular.$model='';
                 this.$v.subtitular.$model='';

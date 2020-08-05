@@ -160,7 +160,7 @@
                                 this.borrarformulario()
                                 setTimeout(()=> this.control = false, 2000)
                                 setTimeout(()=> this.mensaje = '', 2000)
-                                setTimeout(()=> router.push({name:'Administracion'}), 2000)
+                                setTimeout(()=> router.push({name:'ConsultarCategorias'}), 2000)
                             }else{ //Si no esta creado
                                 this.error=true
                                 this.mensaje = 'LA CATEGORIA NO HA PODIDO CREARSE'

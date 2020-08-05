@@ -514,7 +514,6 @@
 
                 let formd = new FormData();
                 formd.append("jwt", jwt)
-                console.log(jwt)
 
                 let response = await axios.post(this.HOST+'server/api.php', formd)
                 let datos = response.data

@@ -26,13 +26,13 @@ Vue.use(VueRouter)
     meta: {requiresAuth: true}
   },
   { //VENTANA PARA SELECCIONAR UN USUARIO
-    path: '/Administracion/ConsultarUsuario',
+    path: '/Administracion/Usuarios',
     name: 'ConsultarUsuario',
     component: () => import('../views/ConsultarUsuario.vue'),
     meta: {requiresAdmin: true}
   },
   { //VENTANA PARA MOSTRAR INFORMACION DE UN USUARIO Y LAS ACCIONES
-    path: '/Administracion/Usuario/:id',
+    path: '/Administracion/Usuarios/:id',
     name: 'Usuario',
     component: () => import('../views/Usuario.vue'),
     meta: {requiresAdmin: true}
@@ -56,7 +56,7 @@ Vue.use(VueRouter)
     meta: {requiresAdmin: true}
   },
   { //VENTANA PARA CONSULTAR ARTICULOS
-    path: '/Administracion/ConsultarArticulos',
+    path: '/Administracion/Articulos',
     name: 'ConsultarArticulos',
     component: () => import('../views/ConsultarArticulos.vue'),
     meta: {requiresAuth: true}
@@ -79,6 +79,18 @@ Vue.use(VueRouter)
     component: () => import('../views/CrearCategoria.vue'),
     meta: {requiresAdmin: true}
   },
+  { //VENTANA PARA CONSULTAR CATEGORIAS
+    path: '/Administracion/Categorias',
+    name: 'ConsultarCategorias',
+    component: () => import('../views/ConsultarCategoria.vue'),
+    meta: {requiresAdmin: true}
+  },
+  { //VENTANA PARA EDITAR CATEGORIA
+    path: '/Administracion/EditarCategoria/:id',
+    name: 'EditarCategoria',
+    component: () => import('../views/EditarCategoria.vue'),
+    meta: {requiresAuth: true}
+  },
   { //VENTANA PARA CREAR NOTAS
     path: '/Administracion/CrearNota',
     name: 'CrearNota',
@@ -92,13 +104,13 @@ Vue.use(VueRouter)
     meta: {requiresAdmin: true}
   },
   { //VENTANA PARA CONSULTAR NOTAS
-    path: '/Administracion/ConsultarNotas',
+    path: '/Administracion/Notas',
     name: 'ConsultarNotas',
     component: () => import('../views/ConsultarNotas.vue'),
     meta: {requiresAuth: true}
   },
   { //VENTANA PARA VER NOTAS
-    path: '/Administracion/notas/:id',
+    path: '/Administracion/Notas/:id',
     name: 'Notas',
     component: () => import('../views/Nota.vue'),
     meta: {requiresAuth: true}

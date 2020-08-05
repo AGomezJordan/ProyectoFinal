@@ -21,6 +21,9 @@
         <v-list-item @click="$router.push({name: 'CrearCategoria'})" v-if="user.tipo === 'administrador'">
             <v-list-item-title class="text-center title ma-4">CREAR CATEGORÍA</v-list-item-title>
         </v-list-item>
+        <v-list-item @click="$router.push({name: 'ConsultarCategorias'})" v-if="user.tipo === 'administrador'">
+            <v-list-item-title class="text-center title ma-4">CONSULTAR <br><br> CATEGORÍA</v-list-item-title>
+        </v-list-item>
         <v-list-item @click="$router.push({name: 'CrearNota'})">
             <v-list-item-title class="text-center title ma-4">CREAR NOTA</v-list-item-title>
         </v-list-item>

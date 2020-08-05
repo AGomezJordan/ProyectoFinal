@@ -221,6 +221,27 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
+                case 'editarCategoria':
+                    if(isset($decoded->id, $decoded->nombreID, $decoded->nombre,$decoded->descripcion)){
+                        $data['id'] = $decoded->id;
+                        $data['nombreID'] = $decoded->nombreID;
+                        $data['nombre'] = $decoded->nombre;
+                        $data['descripcion'] = $decoded->descripcion;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
+                case 'eliminarCategoria':
+                case 'consultarCategoria':
+                    if(isset($decoded->id,$decoded->nombreID)){
+                        $data['id'] = $decoded->id;
+                        $data['nombreID'] = $decoded->nombreID;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
             }
         }
 

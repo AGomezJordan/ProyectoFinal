@@ -188,7 +188,7 @@ export default {
       }
       .foto img{
           width: 100%;
-          height: 100%;
+          height: 200px;
       }
     .tarjeta{
         background-color: rgba(2, 64, 89, 0.90);

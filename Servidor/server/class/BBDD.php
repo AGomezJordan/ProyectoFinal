@@ -586,7 +586,7 @@ class BBDD
                 $usuario = addslashes(trim(strip_tags($usuario)));
 
                 $sql = "SELECT l.usuario, l.fecha, u.nombre, u.apellido1, u.apellido2 from logs l, usuarios u ";
-                $sql.="where l.usuario = u.usuario and l.usuario = '$usuario' ";
+                $sql.="where l.usuario = u.usuario and l.usuario = '$usuario' order by fecha desc ";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -885,7 +885,7 @@ class BBDD
 
             }elseif($autor !== '' && $categoria !=='' && $estado!==''){
                 $autor = addslashes(trim(strip_tags($autor)));
-                $categoria = addslashes(trim(strip_tags($fecha)));
+                $categoria = addslashes(trim(strip_tags($categoria)));
                 $estado = addslashes(trim(strip_tags($estado)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
@@ -1263,6 +1263,68 @@ class BBDD
                 $rt = $categorias;
             }
         }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Editar Categoria
+    function editarCategoria($id, $nombre, $descripcion){
+        $rt = false;
+        try{
+            //Eliminar caracteres que generen conflicto y encriptar clave
+            $id = addslashes(trim(strip_tags($id)));
+            $nombre = addslashes(trim(strip_tags($nombre)));
+            $descripcion = addslashes(trim(strip_tags($descripcion)));
+
+            $sql = "update categoria set descripcion='$descripcion' where nombre = '$id'";
+
+            $result = $this->cnn->query($sql);
+            if ($this->cnn->affected_rows===1)$rt = true;
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Categorias
+    function consultarCategoria($nombreID){
+        $rt = false;
+        try{
+            $nombreID = addslashes(trim(strip_tags($nombreID)));
+
+            $sql = "select * from categoria where nombre = '$nombreID'";
+            $result = $this->cnn->query($sql);
+
+            if ($result->num_rows===1){
+                $categoria=[];
+
+                $row=$result->fetch_assoc();
+
+                $categoria['nombre'] = $row['nombre'];
+                $categoria['descripcion'] = $row['descripcion'];
+
+                $rt = $categoria;
+            }
+        }catch(Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Eliminar Categoria
+    function eliminarCategoria($nombreID){
+        $rt = false;
+        try{
+            $nombreID = addslashes(trim(strip_tags($nombreID)));
+
+            $sql = "DELETE FROM categoria WHERE nombre = '$nombreID'";
+            $result = $this->cnn->query($sql);
+            if ($result){
+                $rt = true;
+            }
+        }catch (Exception $e){
             $rt = false;
         }
         return $rt;

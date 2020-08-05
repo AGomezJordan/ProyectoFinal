@@ -81,6 +81,15 @@ class App
             case 'consultarCategorias':
                 $this->consultarCategorias();
                 break;
+            case 'consultarCategoria':
+                $this->consultarCategoria();
+                break;
+            case 'editarCategoria':
+                $this->editarCategoria();
+                break;
+            case 'eliminarCategoria':
+                $this->eliminarCategoria();
+                break;
             case 'crearNota':
                 $this->crearNota();
                 break;
@@ -724,6 +733,91 @@ class App
         }
     }
 
+    //CONSULTAR CATEGORIA
+    private function consultarCategoria(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin) {
+            $result = $this->cnn->consultarCategoria($this->data['nombreID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'data' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'data' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //EDITAR CATEGORIA
+    private function editarCategoria(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin){
+            $result = $this->cnn->editarCategoria($this->data['nombreID'], $this->data['nombre'], $this->data['descripcion']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'editada' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'editada' => false,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
+
+    //ELIMINAR CATEGORIA
+    private function eliminarCategoria(){
+        $admin = $this->cnn->comprobarAdmin($this->data['id']);
+        if ($admin){
+            $result = $this->cnn->eliminarCategoria($this->data['nombreID']);
+            if ($result) {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => $result,
+
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            } else {
+                $token = array(
+                    'status' => true,
+                    'eliminado' => false,
+                );
+                $jwt = JWT::encode($token, $this->key); //Generamos JWT
+                $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+                echo $json;
+            }
+        }else{
+            echo '{"status":false, "mensaje": "No tienes permisos"}';
+        }
+    }
 
 
 
