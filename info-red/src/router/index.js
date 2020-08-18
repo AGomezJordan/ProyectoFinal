@@ -9,6 +9,11 @@ Vue.use(VueRouter)
     name: 'Home',
     component: () => import('../views/Home.vue')
   },
+  { //VENTANA NOT FOUND
+    path: '/NotFound',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue')
+  },
   { //VENTANA PRINCIPAL POR CATEGORIA
     path: '/categoria/:categoria',
     name: 'HomeFiltrado',
@@ -135,7 +140,9 @@ router.beforeEach((to, from, next) => {
     tipo: localStorage.getItem('tipo') || null
   }
 
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (!to.matched.length) {
+    next({name: 'NotFound'});
+  }else if (to.matched.some(record => record.meta.requiresAuth)) {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
     if (user.usuarioID !==null && user.tipo !==null) {

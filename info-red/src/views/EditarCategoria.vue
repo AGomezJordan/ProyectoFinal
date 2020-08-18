@@ -147,6 +147,7 @@
 
                             this.cargando = false
                         }else{ //Si no hay datos
+                            this.error = true
                             this.cargando = false
                             this.mensaje= 'No hay datos que mostrar'
                             this.control = true
@@ -156,6 +157,7 @@
                     } else { //Datos erroneos
                         this.mensaje = 'Upss... prueba otra vez'
                         this.cargando = false
+                        this.error = true
                         this.control = true
                         setTimeout(()=> this.control = false, 4000)
                     }
@@ -163,6 +165,7 @@
                 } else { //Si no es valido
                     this.mensaje = 'Upss... prueba otra vez'
                     this.cargando = false
+                    this.error = true
                     this.control = true
                     setTimeout(()=> this.control = false, 4000)
                 }
@@ -171,10 +174,12 @@
                 if (datos.mensaje !== null){
                     this.mensaje = datos.mensaje;
                     this.control = true
+                    this.error = true
                     setTimeout(()=> this.control = false, 4000)
                 }else{
                     this.mensaje = 'Server KO... intentelo de nuevo'
                     this.control = true
+                    this.error = true
                     setTimeout(()=> this.control = false, 4000)
                 }
                 this.cargando = false

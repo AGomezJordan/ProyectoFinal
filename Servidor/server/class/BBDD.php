@@ -782,10 +782,20 @@ class BBDD
         $rt = false;
         try{
             $id = addslashes(trim(strip_tags($id)));
-            $sql = "DELETE FROM articulos WHERE id = '$id'";
+
+            $sql = "select foto from articulos where id = '$id'";
             $result = $this->cnn->query($sql);
-            if ($result){
-                $rt = true;
+
+            if ($result->num_rows === 1) {
+                $row = $result->fetch_assoc();
+
+
+                $sql = "DELETE FROM articulos WHERE id = '$id'";
+                $result = $this->cnn->query($sql);
+                if ($result) {
+                    $rt = true;
+                    unlink('img/' . $row['foto']);
+                }
             }
         }catch (Exception $e){
             $rt = false;
@@ -1406,9 +1416,8 @@ class BBDD
 
             $sql = "select * from notas where usuario= '$autor' and id=$notaID";
             $result = $this->cnn->query($sql);
-
-            if ($result){
-                $row = $result->fetch_assoc();
+            $row = $result->fetch_assoc();
+            if ($row){
 
                 $notas['id']= $row['id'];
                 $notas['titulo'] = $row['titulo'];

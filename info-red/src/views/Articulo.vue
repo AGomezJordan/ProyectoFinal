@@ -44,6 +44,8 @@
     import axios from 'axios'
     import ScaleLoader from 'vue-spinner/src/ScaleLoader'
     import {mapState, mapMutations} from 'vuex'
+    import router from '@/router'
+    
     export default {
         name: "Articulo",
         data(){
@@ -116,6 +118,7 @@
                                 this.cargando = false
                                 this.mensaje= 'No hay datos que mostrar'
                                 setTimeout(()=> this.control = false, 4000)
+                                router.push({name: 'NotFound'})
                             }
 
                         } else { //Datos erroneos

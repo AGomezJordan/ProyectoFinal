@@ -220,6 +220,7 @@
                                 this.articulo = decoded.data
                                 this.cargando = false
                             }else{ //Si no hay datos
+                                router.push({name: 'NotFound'})
                                 this.error = true;
                                 this.cargando = false
                                 this.mensaje= 'No hay datos que mostrar'

@@ -77,6 +77,7 @@
                             this.mensaje= 'No hay datos que mostrar'
                             this.control = true
                             setTimeout(()=> this.control = false, 4000)
+                             router.push({name: 'NotFound'})
                         }
 
                     } else { //Datos erroneos
