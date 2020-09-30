@@ -57,6 +57,9 @@ class App
             case "consultarArticulo":
                 $this->consultarArticulo();
                 break;
+            case "consultarArticuloPublicado":
+                $this->consultarArticuloPublicado();
+                break;
             case "consultarArticuloEditar":
                 $this->consultarArticuloEditar();
                 break;
@@ -485,6 +488,30 @@ class App
     //CONSULTAR ARTICULO
     private function consultarArticulo(){
         $result = $this->cnn->consultarArticulo($this->data['articuloID']);
+        if ($result) {
+            $token = array(
+                'status' => true,
+                'data' => $result,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        } else {
+            $token = array(
+                'status' => true,
+                'data' => false,
+
+            );
+            $jwt = JWT::encode($token, $this->key); //Generamos JWT
+            $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON
+            echo $json;
+        }
+    }
+
+    //CONSULTAR ARTICULO PUBLICADO
+    private function consultarArticuloPublicado(){
+        $result = $this->cnn->consultarArticuloPublicado($this->data['articuloID']);
         if ($result) {
             $token = array(
                 'status' => true,

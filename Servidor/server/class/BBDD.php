@@ -4,17 +4,18 @@
 class BBDD
 {
     //ATRIBUTOS
-    private $HOST="localhost";
 
     //produccion
-//    private $US="id14190409_alvaro";
-//    private $PW="Azuqueca99@as";
-//    private $NOMBRE="id14190409_infored";
+   private $HOST="sql310.epizy.com";
+   private $US="epiz_26546712";
+   private $PW="Azuqueca99";
+   private $NOMBRE="epiz_26546712_infored";
 
     //desarrollo
-    private $US="root";
-    private $PW="";
-    private $NOMBRE="infored";
+//    private $HOST="localhost";
+//    private $US="root";
+//    private $PW="";
+//   private $NOMBRE="infored";
 
     private $cnn;
 
@@ -739,6 +740,41 @@ class BBDD
 
             //Seleccionar datos de usuario
             $sql = "Select * from articulos where id = '$id'";
+            $result = $this->cnn->query($sql);
+
+            if ($result->num_rows === 1){
+                $articulo = [];
+                $row = $result->fetch_assoc();
+                $articulo['id'] = $row['id'];
+                $articulo['titular'] = $row['titular'];
+                $articulo['subtitular'] = $row['subtitular'];
+                $articulo['articulo'] = $row['articulo'];
+                $articulo['autor'] = $row['autor'];
+                $articulo['fecha'] = $row['fecha'];
+                $articulo['estado'] = $row['estado'];
+                $articulo['portada'] = $row['foto'];
+                $articulo['categoria'] = $row['categoria'];
+                $articulo['publicado'] = $row['publicado'];
+
+                $articulo['articulo'] = str_replace("\n", " <br> ", $articulo['articulo']);
+
+                $rt = $articulo;
+            }
+
+        }catch (Exception $e){
+            $rt = false;
+        }
+        return $rt;
+    }
+
+    //Consultar Artículo
+    function consultarArticuloPublicado($id){
+        $rt = false;
+        try{
+            $id = addslashes(trim(strip_tags($id)));
+
+            //Seleccionar datos de usuario
+            $sql = "Select * from articulos where id = '$id' and estado='publicado'";
             $result = $this->cnn->query($sql);
 
             if ($result->num_rows === 1){

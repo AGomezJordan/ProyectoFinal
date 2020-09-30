@@ -21,7 +21,7 @@ export default new Vuex.Store({
     mensajeError: '',
     error: false,
     tweets:null,
-    // HOST: 'https://proyectofinallalo.000webhostapp.com/'
+    // HOST: 'http://info-red.freecluster.eu/'
     HOST: 'http://localhost:80/'
   },
   mutations: {

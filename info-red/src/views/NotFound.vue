@@ -31,16 +31,10 @@
 </script>
 
 <style scoped>
-.titulo{
-    font-size: 150px;
-    color: #4ebfb4;
-    font-weight: bold;
-    -webkit-text-stroke: 4px #024059;
-}
-.texto{
-    font-size: 50px;
-    color: white;
-    font-weight: bold;
-    -webkit-text-stroke: 2px #042533;
-}
+    .texto{
+        font-size: 50px;
+        color: white;
+        font-weight: bold;
+        -webkit-text-stroke: 2px #042533;
+    }
 </style>

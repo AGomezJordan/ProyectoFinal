@@ -143,6 +143,7 @@ if(isset($_REQUEST['jwt'])){
                     break;
                 case 'consultarArticuloEditar':
                 case 'consultarArticulo':
+                case 'consultarArticuloPublicado':
                     if(isset($decoded->articuloID)){
                         $data['articuloID'] = $decoded->articuloID;
                         new App($func, $data);

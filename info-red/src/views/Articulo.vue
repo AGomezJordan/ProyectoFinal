@@ -45,7 +45,7 @@
     import ScaleLoader from 'vue-spinner/src/ScaleLoader'
     import {mapState, mapMutations} from 'vuex'
     import router from '@/router'
-    
+
     export default {
         name: "Articulo",
         data(){
@@ -86,7 +86,7 @@
                 let header = {alg: "HS256", typ: "JWT"}; //Cabecera de JWT
                 let data = {
                     articuloID: this.$route.params.id,
-                    func: 'consultarArticulo',
+                    func: 'consultarArticuloPublicado',
                 };
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
