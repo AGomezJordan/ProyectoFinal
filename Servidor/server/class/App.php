@@ -273,7 +273,7 @@ class App
     private function desactivarUsuario(){
         $valido = $this->cnn->comprobarAdmin($this->data['id']);
         if ($valido){
-            $result = $this->cnn->desactivarUsuario($this->data['usuarioID']);
+            $result = $this->cnn->desactivarUsuario($this->data['usuarioID'], $this->data['id']);
             if ($result) {
                 $token = array(
                     'status' => true,

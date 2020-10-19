@@ -21,8 +21,9 @@ export default new Vuex.Store({
     mensajeError: '',
     error: false,
     tweets:null,
-    // HOST: 'http://info-red.freecluster.eu/'
-    HOST: 'http://localhost:80/'
+    // HOST: 'http://makreim.atwebpages.com/'
+    // HOST: 'http://localhost:80/'
+    HOST: 'http://192.168.0.176:80/'
   },
   mutations: {
     setTweets(state, payload){

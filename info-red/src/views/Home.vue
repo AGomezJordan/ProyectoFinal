@@ -75,7 +75,7 @@ export default {
       return{
           movil: false,
           articulos: {},
-          cargando: false
+          cargando: false,
       }
     },
     components: {Twitter, ScaleLoader},

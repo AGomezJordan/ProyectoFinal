@@ -6,16 +6,16 @@ class BBDD
     //ATRIBUTOS
 
     //produccion
-   private $HOST="sql310.epizy.com";
-   private $US="epiz_26546712";
-   private $PW="Azuqueca99";
-   private $NOMBRE="epiz_26546712_infored";
+//    private $HOST="fdb29.awardspace.net";
+//    private $US="3617985_infored";
+//    private $PW="Azuqueca99";
+//    private $NOMBRE="3617985_infored";
 
     //desarrollo
-//    private $HOST="localhost";
-//    private $US="root";
-//    private $PW="";
-//   private $NOMBRE="infored";
+    private $HOST="localhost";
+    private $US="root";
+    private $PW="";
+    private $NOMBRE="infored";
 
     private $cnn;
 
@@ -241,13 +241,14 @@ class BBDD
     }
 
     //Desactivar usuario
-    function desactivarUsuario($id){
+    function desactivarUsuario($usuarioID, $id){
         $rt = false;
         try{
             $id = addslashes(trim(strip_tags($id)));
-            $sql = "update usuarios set valido=false where id = '$id'";
+            $usuarioID = addslashes(trim(strip_tags($usuarioID)));
+            $sql = "update usuarios set valido=false where id = '$usuarioID' and id!='$id'";
             $result = $this->cnn->query($sql);
-            if ($result){
+            if ($this->cnn->affected_rows===1){
                 $rt = true;
             }
         }catch (Exception $e){
@@ -885,9 +886,9 @@ class BBDD
                 $fecha = addslashes(trim(strip_tags($fecha)));
                 $categoria = addslashes(trim(strip_tags($categoria)));
                 $estado = addslashes(trim(strip_tags($estado)));
+
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
                 $sql.="where autor='$autor' and categoria='$categoria' and estado='$estado' and fecha>='$fecha' order by fecha asc";
-
                 $result = $this->cnn->query($sql);
                 if ($result){
                     $articulos=[];
@@ -1028,12 +1029,11 @@ class BBDD
                     $rt = $articulos;
                 }
             }elseif($categoria !== '' && $estado !==''){
-                $categoria = addslashes(trim(strip_tags($estado)));
+                $categoria = addslashes(trim(strip_tags($categoria)));
                 $estado = addslashes(trim(strip_tags($estado)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
                 $sql.="where categoria='$categoria' and estado='$estado' order by fecha asc";
-
                 $result = $this->cnn->query($sql);
                 if ($result){
                     $articulos=[];
