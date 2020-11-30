@@ -77,7 +77,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
     import router from '@/router'
     import {required, maxLength} from 'vuelidate/lib/validators'
     export default {
@@ -179,7 +179,17 @@
                 this.cargando = false
             }
         },
+    mounted(){
+        this.setBack(true)
+        this.setRutaBack('ConsultarNotas')
+        window.scroll(0,0)
+    },
+    destroyed(){
+        this.setBack(false)
+        this.setRutaBack('')
+    },
     methods:{
+        ...mapMutations(['setBack', 'setRutaBack']),
         borrarRules(){
             this.nameRules = null
             this.descripcionRules = null

@@ -200,15 +200,17 @@
         mounted(){
             //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(true)
+            this.setRutaBack('ConsultarUsuario')
             window.scroll(0,0)
         },
         destroyed(){
             //DESAPAREZCA LA FLECHA PARA IR ATRAS EN LA CABECERA
             this.setBack(false)
+            this.setRutaBack('')
             this.mensaje = ''
         },
         methods:{
-            ...mapMutations(['setBack', 'setMensajeError', 'setError']),
+            ...mapMutations(['setBack', 'setMensajeError', 'setError', 'setRutaBack']),
             async borrar(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT

@@ -15,7 +15,7 @@ Vue.use(VueRouter)
     component: () => import('../views/NotFound.vue')
   },
   { //VENTANA PRINCIPAL POR CATEGORIA
-    path: '/categoria/:categoria',
+    path: '/categoria/:id',
     name: 'HomeFiltrado',
     component: () => import('../views/HomeFiltrado.vue')
   },
@@ -55,7 +55,7 @@ Vue.use(VueRouter)
     meta: {requiresAdmin: true}
   },
   { //VENTANA PARA EDITAR UN USUARIO
-    path: '/Administracion/EditarUsuario/:id',
+    path: '/Administracion/Usuarios/Editar/:id',
     name: 'EditarUsuario',
     component: () => import('../views/EditarUsuario.vue'),
     meta: {requiresAdmin: true}
@@ -67,13 +67,13 @@ Vue.use(VueRouter)
     meta: {requiresAuth: true}
   },
   { //VENTANA PARA VALIDAR ARTICULOS
-    path: '/Administracion/ValidarArticulos/:id',
+    path: '/Administracion/Articulos/Validar/:id',
     name: 'ValidarArticulos',
     component: () => import('../views/ValidarArticulos.vue'),
     meta: {requiresAuth: true}
   },
   { //VENTANA PARA EDITAR ARTICULOS
-    path: '/Administracion/EditarArticulo/:id',
+    path: '/Administracion/Articulos/Editar/:id',
     name: 'EditarArticulo',
     component: () => import('../views/EditarArticulo.vue'),
     meta: {requiresAuth: true}
@@ -91,7 +91,7 @@ Vue.use(VueRouter)
     meta: {requiresAdmin: true}
   },
   { //VENTANA PARA EDITAR CATEGORIA
-    path: '/Administracion/EditarCategoria/:id',
+    path: '/Administracion/Categorias/Editar/:id',
     name: 'EditarCategoria',
     component: () => import('../views/EditarCategoria.vue'),
     meta: {requiresAuth: true}
@@ -121,7 +121,7 @@ Vue.use(VueRouter)
     meta: {requiresAuth: true}
   },
   { //VENTANA PARA EDITAR NOTAS
-    path: '/Administracion/EditarNota/:id',
+    path: '/Administracion/Notas/Editar/:id',
     name: 'EditarNota',
     component: () => import('../views/EditarNota.vue'),
     meta: {requiresAuth: true}

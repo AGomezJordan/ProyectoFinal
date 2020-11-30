@@ -137,7 +137,6 @@ if(isset($_REQUEST['jwt'])){
                     }else{
                         throw new Exception();
                     }
-                case 'consultarCategorias':
                 case 'consultarArticulos':
                     new App($func, null);
                     break;
@@ -151,7 +150,14 @@ if(isset($_REQUEST['jwt'])){
                         throw new Exception();
                     }
                     break;
-
+                case 'consultarCategorias':
+                    if(isset($decoded->admin)){
+                        $data['admin'] = $decoded->admin;
+                        new App($func, $data);
+                    }else{
+                        throw new Exception();
+                    }
+                    break;
                 case 'despublicarArticulo':
                 case 'publicarArticulo':
                 case 'eliminarArticulo':

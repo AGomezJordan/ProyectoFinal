@@ -21,9 +21,11 @@ export default new Vuex.Store({
     mensajeError: '',
     error: false,
     tweets:null,
+    rutaBack: "",
+    paramBack: "",
     // HOST: 'http://makreim.atwebpages.com/'
-    // HOST: 'http://localhost:80/'
-    HOST: 'http://192.168.0.176:80/'
+    HOST: 'http://localhost:80/'
+    // HOST: 'http://192.168.0.176:80/'
   },
   mutations: {
     setTweets(state, payload){
@@ -47,6 +49,12 @@ export default new Vuex.Store({
     setError(state, payload){
       state.error = payload
     },
+    setRutaBack(state, payload){
+      state.rutaBack = payload
+    },
+    setParamBack(state, payload){
+      state.paramBack = payload
+    },
     borrarUsuario(state){
       state.user = {
         usuarioID: null,
@@ -55,6 +63,20 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    //Ir atras
+    irAtras({state}){
+      if(state.rutaBack === 'nok'){
+        router.go(-1)
+      }else {
+        let pushObject = {}
+        if (state.paramBack) {
+          pushObject = {name: state.rutaBack, params: {id: state.paramBack}}
+        } else {
+          pushObject = {name: state.rutaBack}
+        }
+        router.push({name: state.rutaBack})
+      }
+    },
     //Iniciar sesion en el sistema
     async iniciarSesion({commit, state}, payload){
       let jws = KJUR.jws.JWS; //Objeto para tratar JWT

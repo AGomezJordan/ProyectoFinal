@@ -125,10 +125,10 @@ class App
             $token = array(
                 'status' => true,
                 'login'=> true,
-                'data' => [
+                'data' => array(
                     'usuarioID' => $result['id'],
                     'tipo' => $result['tipo']
-                ]
+                )
             );
             $jwt = JWT::encode($token, $this->key); //Generamos JWT
             $json = '{"status": true, "token":"'.$jwt.'"}'; //Lo enviamos a traves de un JSON
@@ -738,12 +738,11 @@ class App
 
     //CONSULTAR CATEGORIAS
     private function consultarCategorias(){
-        $result = $this->cnn->consultarCategorias();
+        $result = $this->cnn->consultarCategorias($this->data['admin']);
         if ($result) {
             $token = array(
                 'status' => true,
-                'data' => $result,
-
+                'data' => $result
             );
             $jwt = JWT::encode($token, $this->key); //Generamos JWT
             $json = '{"status": true, "token":"' . $jwt . '"}'; //Lo enviamos a traves de un JSON

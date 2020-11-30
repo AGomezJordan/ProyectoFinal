@@ -1288,11 +1288,15 @@ class BBDD
     }
 
     //Consultar Categorias
-    function consultarCategorias(){
+    function consultarCategorias($admin){
         $rt = false;
         try{
 
-            $sql = "select * from categoria";
+            if($admin==="ok"){
+                $sql = "select nombre as categoria, descripcion from categoria";
+            }else{
+                $sql = "select DISTINCT a.categoria, c.descripcion from articulos a, categoria c where estado = 'publicado' and a.categoria = c.nombre order by a.categoria ASC";
+            }
             $result = $this->cnn->query($sql);
 
             if ($result){
@@ -1300,12 +1304,10 @@ class BBDD
                 $cont = 0;
 
                 while (($row=$result->fetch_assoc())){
-                    $categorias[$cont]['nombre'] = $row['nombre'];
+                    $categorias[$cont]['nombre'] = $row['categoria'];
                     $categorias[$cont]['descripcion'] = $row['descripcion'];
-
                     $cont++;
                 }
-
                 $rt = $categorias;
             }
         }catch(Exception $e){

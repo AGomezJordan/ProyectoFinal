@@ -153,7 +153,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
     import router from "../router";
 
     export default {
@@ -195,7 +195,21 @@
             this.obtenerCategorias(),
             this.obtenerArticulo()
         },
+        mounted(){
+            //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
+            this.setBack(true)
+            this.setRutaBack('ValidarArticulos')
+            this.setParamBack(this.$route.params.id)
+            window.scroll(0,0)
+        },
+        destroyed(){
+            this.setBack(false)
+            this.setRutaBack('')
+            this.setParamBack('')
+            this.mensaje = ''
+        },
         methods:{
+            ...mapMutations(['setBack', 'setParamBack', 'setRutaBack']),
             async obtenerArticulo(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT
@@ -278,6 +292,7 @@
                 let data = {
                     id: localStorage.getItem('usuarioID'),
                     func: 'consultarCategorias',
+                    admin: "ok"
                 };
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT

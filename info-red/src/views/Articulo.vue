@@ -70,13 +70,15 @@
         },
         mounted(){
             this.setBack(true)
+            this.setRutaBack("nok")
             window.scroll(0,0)
         },
         destroyed(){
+            this.setRutaBack("")
             this.setBack(false)
         },
         methods:{
-            ...mapMutations(['setBack']),
+            ...mapMutations(['setBack', 'setRutaBack']),
             async obtenerArticulo(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT

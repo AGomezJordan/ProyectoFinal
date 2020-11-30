@@ -34,6 +34,7 @@
         },
         mounted(){
             this.setBack(true)
+            this.setRutaBack('ConsultarNotas')
             window.scroll(0,0)
         },
         async created(){
@@ -109,9 +110,10 @@
         },
         destroyed(){
             this.setBack(false)
+            this.setRutaBack('')
         },
         methods:{
-            ...mapMutations(['setBack', 'setMensajeError', 'setError']),
+            ...mapMutations(['setBack', 'setMensajeError', 'setError', 'setRutaBack']),
         }
     }
 </script>

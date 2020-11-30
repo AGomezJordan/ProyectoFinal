@@ -10,7 +10,7 @@
     >
       <v-app-bar-nav-icon @click="drawer=!drawer"></v-app-bar-nav-icon>
       <RouterLink :to="{name:'Home'}"><img  width="60" src="@/assets/logo.png" /></RouterLink>
-      <v-icon v-if="back" class="white--text ml-4" @click="atras()">mdi-reply</v-icon>
+      <v-icon v-if="back" class="white--text ml-4" @click="irAtras()">mdi-reply</v-icon>
       <div class="frase">
       <div class="texto d-none d-sm-none d-md-block">
           <span v-if="this.user.tipo == null">LA NUEVA GENERACIÓN</span>
@@ -18,6 +18,7 @@
       </div>
       </div>
       <v-spacer></v-spacer>
+        <v-switch v-if="user.tipo !== null" color="success" dark v-model="modeAdmin" label="LOG"></v-switch>
     </v-app-bar>
 
       <!-- MENU LAERAL OCULTO NO LOGEADO -->
@@ -28,7 +29,7 @@
               temporary
               clipped
               color="secondary"
-              v-if="this.user.tipo == null"
+              v-if="user.tipo == null || !modeAdmin"
       >
           <v-list
                   dense
@@ -38,15 +39,22 @@
               >
                   <v-list-item-title class="text-center title">MENÚ</v-list-item-title>
                   <div class="linea"></div>
-                  <div class="text-center mb-5">
+                  <div class="text-center mb-5" v-if="user.tipo === null">
                       <v-btn @click="abrirLogin()" color="success" class="btn">ADMINISTRACIÓN</v-btn>
                   </div>
+                  <div class="text-center mb-5" v-if="user.tipo !== null">
+                      <v-btn @click="dialoga = true" color="success" class="btn">CERRAR SESION</v-btn>
+                  </div>
                   <div class="categorias">
-                  <v-list-item v-for="categoria in categorias">
+                  <v-list-item
+                      exact-active="false"
+                      v-for="categoria in categorias" exact-active-class=""
+                      :class="$route.path === '/categoria/'+categoria.nombre ? 'success' : ''"
+                      @click="$router.push({path:'/categoria/'+categoria.nombre})"
+                  >
                       <v-list-item-title
                         class="text-center title ma-4"
                         style="text-transform: uppercase;"
-                        @click="$router.push({path:'/categoria/'+categoria.nombre})"
                         >
 
                           {{categoria.nombre}}
@@ -123,7 +131,7 @@
               temporary
               clipped
               color="secondary"
-              v-if="this.user.tipo != null"
+              v-if="this.user.tipo != null && modeAdmin"
               overlay-color="#000"
       >
           <v-list
@@ -173,7 +181,7 @@
       </v-dialog>
 
       <!-- APP -->
-    <v-main :class="{'content':this.user.tipo == null, 'contentAdmin': this.user.tipo != null}">
+    <v-main :class="{'content':(this.user.tipo == null || !this.modeAdmin), 'contentAdmin': (this.user.tipo != null && this.modeAdmin)}">
         <RouterView :key="$route.fullPath"></RouterView>
     </v-main>
   </v-app>
@@ -194,6 +202,7 @@ export default {
     components: {MenuUsuario},
     data(){
         return{
+            modeAdmin: true,
             categorias: {},
             drawer:false,
             dialoga: false,
@@ -239,13 +248,12 @@ export default {
             let data = {
                 id: localStorage.getItem('usuarioID'),
                 func: 'consultarCategorias',
+                admin: "nok"
             };
 
             let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
-
             let formd = new FormData();
             formd.append("jwt", jwt)
-
             let response = await axios.post(this.HOST + 'server/api.php', formd)
             let datos = response.data
 
@@ -267,7 +275,6 @@ export default {
                         }
 
                     } else { //Datos erroneos
-
                         this.cargando = false
                     }
 
@@ -280,10 +287,7 @@ export default {
             }
         },
         ...mapMutations(['setBack', 'setAdmin', 'setDialogLogin']),
-        ...mapActions(['iniciarSesion', 'cerrarSesion']),
-        atras(){
-            this.$router.go(-1)
-        },
+        ...mapActions(['iniciarSesion', 'cerrarSesion', 'irAtras']),
         login(){
             this.iniciarSesion({
                 usuario: this.$v.usuario.$model,
@@ -320,15 +324,15 @@ export default {
         font-size: 30px;
     }
     .content{
+        background-attachment: fixed;
         overflow: hidden;
         background-image:url("assets/fondo1.jpg") ;
         background-repeat: repeat-y ;
     }
     .contentAdmin{
-
+        background-attachment: fixed;
         overflow: hidden;
-        background-image:url("assets/fondoAdmin.jpg") ;
-        background-repeat: repeat-y ;
+        background-image:url("assets/fondoAdmin.jpg")
     }
     .linea{
         width: 100%;

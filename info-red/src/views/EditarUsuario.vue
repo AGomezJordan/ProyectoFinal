@@ -212,7 +212,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
     import router from "../router";
 
     export default {
@@ -346,10 +346,21 @@
                 this.cargando = false
             }
         },
+        mounted(){
+            //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
+            this.setBack(true)
+            this.setRutaBack('Usuario')
+            this.setParamBack(this.$route.params.id)
+            window.scroll(0,0)
+        },
         destroyed(){
+            this.setBack(false)
+            this.setRutaBack('')
+            this.setParamBack('')
             this.mensaje = ''
         },
         methods:{
+            ...mapMutations(['setBack', 'setRutaBack', 'setPramBack']),
             borrarformulario(){
                 this.$v.usuario.$model = ''
                 this.$v.tipoUsuario.$model = ''

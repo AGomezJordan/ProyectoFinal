@@ -103,7 +103,7 @@ export default {
                     func: 'filtrarArticulos',
                     autor: '',
                     fecha: '',
-                    categoria: this.$route.params.categoria,
+                    categoria: this.$route.params.id,
                     estado: ''
             };
 

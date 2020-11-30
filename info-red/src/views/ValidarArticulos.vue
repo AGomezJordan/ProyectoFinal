@@ -171,18 +171,19 @@
             Loader
         },
         created() {
-            this.setBack(true)
             this.obtenerArticulo()
         },
         mounted(){
             this.setBack(true)
+            this.setRutaBack('ConsultarArticulos')
             window.scroll(0,0)
         },
         destroyed(){
             this.setBack(false)
+            this.setRutaBack('')
         },
         methods:{
-            ...mapMutations(['setBack', 'setMensajeError']),
+            ...mapMutations(['setBack', 'setRutaBack', 'setMensajeError']),
             async obtenerArticulo(){
                 this.cargando = true;
                 let jws = KJUR.jws.JWS; //Objeto para tratar JWT

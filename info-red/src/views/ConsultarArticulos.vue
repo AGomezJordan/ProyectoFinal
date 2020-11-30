@@ -327,6 +327,7 @@
                 let data = {
                     id: localStorage.getItem('usuarioID'),
                     func: 'consultarCategorias',
+                    admin: "ok"
                 };
 
                 let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT
