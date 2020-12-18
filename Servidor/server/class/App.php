@@ -127,7 +127,8 @@ class App
                 'login'=> true,
                 'data' => array(
                     'usuarioID' => $result['id'],
-                    'tipo' => $result['tipo']
+                    'tipo' => $result['tipo'],
+                    'usuario' => $result['usuario']
                 )
             );
             $jwt = JWT::encode($token, $this->key); //Generamos JWT

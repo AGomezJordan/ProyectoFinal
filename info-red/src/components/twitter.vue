@@ -20,10 +20,6 @@
                         <!-- TWEET -->
                         <div class="texto text-left pa-2">
                             {{tweet.text}}
-                        </div>
-                        <!-- FECHA -->
-                        <div class="fecha">
-                            <span class="fechaDato">{{tweet.fecha}}</span>
                             <v-icon class="white--text icono">mdi-twitter</v-icon>
                         </div>
                     </a>

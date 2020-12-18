@@ -78,7 +78,7 @@
     import KJUR from 'jsrsasign'
     import decode from 'jwt-decode'
     import axios from 'axios'
-    import {mapState} from 'vuex'
+    import {mapState, mapMutations} from 'vuex'
     import router from '@/router'
     import {required, maxLength} from 'vuelidate/lib/validators'
     export default {
@@ -185,7 +185,19 @@
                 this.cargando = false
             }
         },
+    mounted(){
+        //APAREZCA FLECHA PARA IR ATRAS EN LA CABECERA
+        this.setBack(true)
+        this.setRutaBack('ConsultarCategorias')
+        window.scroll(0,0)
+    },
+    destroyed(){
+        this.setBack(false)
+        this.setRutaBack('')
+        this.mensaje = ''
+    },
     methods:{
+        ...mapMutations(['setBack', 'setRutaBack']),
         borrarRules(){
             this.nameRules = null
             this.descripcionRules = null

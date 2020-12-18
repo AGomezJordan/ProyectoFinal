@@ -7,6 +7,7 @@
                     <v-btn
                         color="info"
                         @click="$router.push({name: 'EditarArticulo', params:{id: $route.params.id}})"
+                        v-if="articulo.autor === user.usuario || user.tipo === 'administrador'"
                     >
                         EDITAR
                     </v-btn>

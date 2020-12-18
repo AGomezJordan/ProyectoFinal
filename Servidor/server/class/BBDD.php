@@ -16,7 +16,6 @@ class BBDD
     private $US="root";
     private $PW="";
     private $NOMBRE="infored";
-
     private $cnn;
 
     //CONSTRUCTOR Y DESTRUCTOR
@@ -861,7 +860,7 @@ class BBDD
     }
 
     //Despublicar Artículo
-    function despublicarArticulo( $articuloid){
+    function despublicarArticulo($articuloid){
         $rt = false;
         try{
             $articuloid = addslashes(trim(strip_tags($articuloid)));
@@ -1033,7 +1032,7 @@ class BBDD
                 $estado = addslashes(trim(strip_tags($estado)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where categoria='$categoria' and estado='$estado' order by fecha asc";
+                $sql.="where categoria='$categoria' and estado='$estado' order by fecha desc";
                 $result = $this->cnn->query($sql);
                 if ($result){
                     $articulos=[];
@@ -1055,7 +1054,7 @@ class BBDD
                 $estado = addslashes(trim(strip_tags($estado)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where fecha='$fecha' and estado='$estado' order by fecha asc";
+                $sql.="where fecha='$fecha' and estado='$estado' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1078,7 +1077,7 @@ class BBDD
                 $fecha = addslashes(trim(strip_tags($fecha)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where autor='$autor' and fecha>='$fecha' order by fecha asc";
+                $sql.="where autor='$autor' and fecha>='$fecha' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1101,7 +1100,7 @@ class BBDD
                 $categoria = addslashes(trim(strip_tags($categoria)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where autor='$autor' and categoria='$categoria' order by fecha asc";
+                $sql.="where autor='$autor' and categoria='$categoria' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1124,7 +1123,7 @@ class BBDD
                 $fecha = addslashes(trim(strip_tags($fecha)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where categoria='$categoria' and fecha>='$fecha' order by fecha asc";
+                $sql.="where categoria='$categoria' and fecha>='$fecha' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1146,7 +1145,7 @@ class BBDD
                 $fecha = addslashes(trim(strip_tags($fecha)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where fecha>='$fecha' order by fecha asc";
+                $sql.="where fecha>='$fecha' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1168,7 +1167,7 @@ class BBDD
                 $categoria = addslashes(trim(strip_tags($categoria)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where categoria='$categoria' order by fecha asc";
+                $sql.="where categoria='$categoria' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1190,7 +1189,7 @@ class BBDD
                 $estado = addslashes(trim(strip_tags($estado)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where estado='$estado' order by fecha asc";
+                $sql.="where estado='$estado' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1212,7 +1211,7 @@ class BBDD
                 $autor = addslashes(trim(strip_tags($autor)));
 
                 $sql = "SELECT id, titular, fecha, autor, foto from articulos ";
-                $sql.="where autor='$autor' order by fecha asc";
+                $sql.="where autor='$autor' order by fecha desc";
 
                 $result = $this->cnn->query($sql);
                 if ($result){
@@ -1252,8 +1251,13 @@ class BBDD
 
             $autor = $this->consultarUsuario($usuarioID)['usuario'];
 
-            $sql = "update articulos set titular='$titular', subtitular='$subtitular', articulo='$articulo', categoria='$categoria' ";
-            $sql.="where id='$id' and autor = '$autor'";
+            if($this->comprobarAdmin($usuarioID)){
+                $sql = "update articulos set titular='$titular', subtitular='$subtitular', articulo='$articulo', categoria='$categoria' ";
+                $sql.="where id='$id'";
+            }else{
+                $sql = "update articulos set titular='$titular', subtitular='$subtitular', articulo='$articulo', categoria='$categoria' ";
+                $sql.="where id='$id' and autor = '$autor'";
+            }
 
             $result = $this->cnn->query($sql);
             if ($this->cnn->affected_rows===1)$rt = true;

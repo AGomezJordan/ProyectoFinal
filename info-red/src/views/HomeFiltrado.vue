@@ -104,7 +104,7 @@ export default {
                     autor: '',
                     fecha: '',
                     categoria: this.$route.params.id,
-                    estado: ''
+                    estado: 'publicado'
             };
 
             let jwt = jws.sign("HS256", header, data, {utf8: secret}); //Firma de JWT

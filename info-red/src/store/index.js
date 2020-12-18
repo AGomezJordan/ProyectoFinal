@@ -15,7 +15,8 @@ export default new Vuex.Store({
     back: false,
     user:{
       usuarioID: localStorage.getItem('usuarioID') || null,
-      tipo: localStorage.getItem('tipo') || null
+      tipo: localStorage.getItem('tipo') || null,
+      usuario: localStorage.getItem('usuario') || null
     },
     dialogLogin: false,
     mensajeError: '',
@@ -24,8 +25,8 @@ export default new Vuex.Store({
     rutaBack: "",
     paramBack: "",
     // HOST: 'http://makreim.atwebpages.com/'
-    HOST: 'http://localhost:80/'
-    // HOST: 'http://192.168.0.176:80/'
+     HOST: 'http://localhost:80/'
+    //HOST: 'http://192.168.0.176:80/'
   },
   mutations: {
     setTweets(state, payload){
@@ -58,7 +59,8 @@ export default new Vuex.Store({
     borrarUsuario(state){
       state.user = {
         usuarioID: null,
-        tipo: null
+        tipo: null,
+        usuario: null
       }
     }
   },
@@ -112,6 +114,7 @@ export default new Vuex.Store({
               let data = decoded.data;
               localStorage.setItem('usuarioID', data.usuarioID)
               localStorage.setItem('tipo', data.tipo)
+              localStorage.setItem('usuario', data.usuario)
               commit('setUser', data)
               commit('setDialogLogin', false)
               commit('setMensajeError', null)

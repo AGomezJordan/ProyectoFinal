@@ -18,7 +18,7 @@
       </div>
       </div>
       <v-spacer></v-spacer>
-        <v-switch v-if="user.tipo !== null" color="success" dark v-model="modeAdmin" label="LOG"></v-switch>
+        <v-switch v-if="user.tipo !== null" color="success"  dark v-model="modeAdmin" label="LOG"></v-switch>
     </v-app-bar>
 
       <!-- MENU LAERAL OCULTO NO LOGEADO -->
@@ -325,12 +325,14 @@ export default {
     }
     .content{
         background-attachment: fixed;
+        background-size: cover;
         overflow: hidden;
         background-image:url("assets/fondo1.jpg") ;
         background-repeat: repeat-y ;
     }
     .contentAdmin{
         background-attachment: fixed;
+        background-size: cover;
         overflow: hidden;
         background-image:url("assets/fondoAdmin.jpg")
     }
